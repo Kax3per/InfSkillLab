@@ -57,15 +57,20 @@ export function AppSidebar({
       
       {/* 🔥 LOGO */}
  <SidebarHeader>
-  <div className="flex items-center justify-center p-2">
-    <Image
-      src="/images/infskillslab.png"
-      alt="logo"
-      width={90}
-      height={90}
-      className="object-contain"
-    />
-  </div>
+<div className="flex items-center j h-16">
+  <Image
+    src="/images/infskillslab.png"
+    alt="logo"
+    width={90}
+    height={40}
+    className="
+      object-contain
+      transition-transform
+      duration-300
+      group-data-[collapsible=icon]:scale-125
+    "
+  />
+</div>
 </SidebarHeader>
 
       {/* 🔥 MENU */}
