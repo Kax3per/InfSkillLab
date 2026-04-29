@@ -5,7 +5,13 @@ import { Toaster } from "@/components/ui/sonner"
 import { TooltipProvider } from "@/components/ui/tooltip"
 
 const geist = Geist({subsets:['latin'],variable:'--font-sans'});
-
+export const metadata = {
+  title: "Inf Skill Lab",
+  description: "Twoja aplikacja",
+  icons: {
+    icon: "/favicon1.png"
+  },
+}
 
 export default function RootLayout({
   children,

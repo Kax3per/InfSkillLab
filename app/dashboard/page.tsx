@@ -63,7 +63,7 @@ export default function Dashboard() {
             <div className="h-32 rounded-xl bg-muted/50" />
           </div>
 
-          <div className="h-[400px] rounded-xl bg-muted/50" />
+          <div className="h-100 rounded-xl bg-muted/50" />
         </div>
       </SidebarInset>
     </SidebarProvider>
