@@ -119,15 +119,16 @@ export function SignupForm({ className, ...props }: React.ComponentProps<"form">
         </Field>
 
         <Field>
-          <Button type="submit" disabled={loading}>
+          <Button type="submit" disabled={loading} className=" " >
             {loading ? "Tworzenie..." : "Stwórz konto"}
           </Button>
         </Field>
 
-        <FieldSeparator>Zarejestruj się za pomocą</FieldSeparator>
+        <FieldSeparator>Zaloguj się za pomocą</FieldSeparator>
 
         <Field>
-          <Button variant="outline" type="button" onClick={handleGithubLogin}>
+          <Button variant="outline" type="button" onClick={handleGithubLogin}
+          >
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
               <path
                 d="M12 .297c-6.63 0-12 5.373-12 12 
@@ -155,12 +156,12 @@ export function SignupForm({ className, ...props }: React.ComponentProps<"form">
             Sign up with GitHub
           </Button>
 
-          <FieldDescription className="px-6 text-center">
+          <div className="px-6 text-sm text-center">
             Masz już konto?{" "}
             <a href="/login" className="underline underline-offset-4">
               Zaloguj się
             </a>
-          </FieldDescription>
+          </div>
         </Field>
       </FieldGroup>
     </form>

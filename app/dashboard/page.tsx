@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect } from "react"
+import { useEffect, useState } from "react"
 import { useRouter } from "next/navigation"
 import { supabase } from "@/lib/supabase"
 
@@ -13,15 +13,19 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb"
-import { Separator } from "@/components/ui/separator"
 import {
   SidebarInset,
   SidebarProvider,
   SidebarTrigger,
 } from "@/components/ui/sidebar"
 
-export default function Dashboard() {
+export default function DashboardLayout({
+  children,
+}: {
+  children: React.ReactNode
+}) {
   const router = useRouter()
+  const [userData, setUserData] = useState<any>(null)
 
   useEffect(() => {
     const checkUser = async () => {
@@ -29,19 +33,35 @@ export default function Dashboard() {
 
       if (!data.user) {
         router.push("/login")
+        return
       }
+
+      const user = data.user
+
+      setUserData({
+        email: user.email,
+        name:
+          user.user_metadata?.full_name ||
+          user.user_metadata?.name ||
+          user.email,
+        avatar:
+          user.user_metadata?.avatar_url ||
+          "/avatars/default.png",
+      })
     }
 
     checkUser()
-  }, [])
+  }, [router])
+
+  if (!userData) return null
 
   return (
     <SidebarProvider>
-      <AppSidebar />
+      <AppSidebar user={userData} />
+
       <SidebarInset>
         <header className="flex h-16 items-center gap-2 px-4">
           <SidebarTrigger />
-          <Separator orientation="vertical" className="h-4" />
 
           <Breadcrumb>
             <BreadcrumbList>
@@ -56,14 +76,9 @@ export default function Dashboard() {
           </Breadcrumb>
         </header>
 
+        {/* 🔥 TU ŁADUJĄ SIĘ LEKCJE */}
         <div className="flex flex-1 flex-col gap-4 p-4">
-          <div className="grid md:grid-cols-3 gap-4">
-            <div className="h-32 rounded-xl bg-muted/50" />
-            <div className="h-32 rounded-xl bg-muted/50" />
-            <div className="h-32 rounded-xl bg-muted/50" />
-          </div>
-
-          <div className="h-100 rounded-xl bg-muted/50" />
+          {children}
         </div>
       </SidebarInset>
     </SidebarProvider>

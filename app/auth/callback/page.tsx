@@ -21,5 +21,5 @@ export default function Callback() {
     handleAuth()
   }, [])
 
-  return <p>Logowanie...</p>
+ 
 }
