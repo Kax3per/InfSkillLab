@@ -16,7 +16,7 @@ export default function RootLayout({
     <html lang="pl" className={cn("font-sans", geist.variable)}>
       <body>
         <TooltipProvider>
-  {children}
+        {children}
         <Toaster />
 
         </TooltipProvider>
