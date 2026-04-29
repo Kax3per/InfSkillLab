@@ -1,5 +1,6 @@
 "use client"
-
+import { supabase } from "@/lib/supabase"
+import { useRouter } from "next/navigation"
 import {
   Avatar,
   AvatarFallback,
@@ -32,8 +33,13 @@ export function NavUser({
   }
 }) {
   const { isMobile } = useSidebar()
-
+const router = useRouter()
+const handleLogout = async () => {
+  await supabase.auth.signOut()
+  router.push("/login")
+}
   return (
+    
     <SidebarMenu>
       <SidebarMenuItem>
         <DropdownMenu>
@@ -98,7 +104,7 @@ export function NavUser({
               </DropdownMenuItem>
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
-            <DropdownMenuItem>
+            <DropdownMenuItem onClick={handleLogout}>
               <LogOutIcon
               />
               Log out

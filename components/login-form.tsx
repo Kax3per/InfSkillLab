@@ -55,6 +55,19 @@ export function LoginForm({
     router.push("/dashboard")
   }
 
+  const handleGithubLogin = async () => {
+  const { error } = await supabase.auth.signInWithOAuth({
+    provider: "github",
+    options: {
+      redirectTo: `${window.location.origin}/auth/callback`,
+    },
+  })
+
+  if (error) {
+    toast.error("Błąd logowania GitHub")
+  }
+}
+
   return (
     <form
       className={cn("flex flex-col gap-6", className)}
@@ -98,7 +111,7 @@ export function LoginForm({
         <FieldSeparator>Zaloguj się za pomocą</FieldSeparator>
 
         <Field>
-          <Button variant="outline" type="button">
+          <Button variant="outline" type="button" onClick={handleGithubLogin}>
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
               <path
                 d="M12 .297c-6.63 0-12 5.373-12 12 
