@@ -58,9 +58,9 @@ function RenderItem(item: NavItem) {
   return (
     <SidebarMenuSubItem key={item.title}>
       <SidebarMenuSubButton asChild>
-        <a href={item.url || "#"}>
+        <Link href={item.url || "#"}>
           <span>{item.title}</span>
-        </a>
+        </Link>
       </SidebarMenuSubButton>
     </SidebarMenuSubItem>
   )
@@ -69,7 +69,7 @@ function RenderItem(item: NavItem) {
 export function NavMain({ items }: { items: NavItem[] }) {
   return (
     <SidebarGroup>
-      <SidebarGroupLabel>Egzamin</SidebarGroupLabel>
+      <SidebarGroupLabel>Materiały</SidebarGroupLabel>
 
       <SidebarMenu>
         {items.map((item) => (
