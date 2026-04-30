@@ -30,40 +30,29 @@ export function SignupForm({
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
 
-    // 🔥 VALIDATION
+    // 🔥 WALIDACJA
     if (!name.trim()) return toast.info("Podaj imię")
     if (!email.trim()) return toast.info("Podaj email")
-    if (!password.trim()) return toast.info("Podaj hasło")
     if (!email.includes("@")) return toast.warning("Niepoprawny email")
+    if (!password.trim()) return toast.info("Podaj hasło")
     if (password.length < 8) return toast.error("Min. 8 znaków")
     if (password !== confirmPassword)
       return toast.warning("Hasła nie są takie same")
 
     setLoading(true)
 
-    // 🔥 SIGN UP
- const { data, error } = await supabase.auth.signUp({
-  email,
-  password,
-  options: {
-    emailRedirectTo: `${window.location.origin}/auth/callback`,
-  },
-})
+    // 🔥 SIGNUP (TYLKO SUPABASE)
+    const { data, error } = await supabase.auth.signUp({
+      email,
+      password,
+      options: {
+        emailRedirectTo: `${window.location.origin}/auth/callback`,
+        data: {
+          name,
+        },
+      },
+    })
 
-const confirmUrl = `${window.location.origin}/auth/confirm?token=${data.session?.access_token}`
-
-await fetch("/api/send-email", {
-  method: "POST",
-  body: JSON.stringify({
-    email,
-    confirmUrl,
-  }),
-})
-
-await supabase.auth.resend({
-  type: "signup",
-  email,
-})
     if (error) {
       toast.error(error.message)
       setLoading(false)
@@ -76,7 +65,10 @@ await supabase.auth.resend({
       return
     }
 
-    // 🔥 PROFILE INSERT (NIE BLOKUJE FLOW)
+    // 🔥 KLUCZOWE — wyloguj po signup
+    await supabase.auth.signOut()
+
+    // 🔥 opcjonalnie zapis do profiles
     try {
       await supabase.from("profiles").upsert({
         id: data.user.id,
@@ -93,6 +85,7 @@ await supabase.auth.resend({
     setLoading(false)
   }
 
+  // 🔥 GITHUB LOGIN
   const handleGithubLogin = async () => {
     const { error } = await supabase.auth.signInWithOAuth({
       provider: "github",
@@ -122,12 +115,18 @@ await supabase.auth.resend({
 
         <Field>
           <FieldLabel>Imię</FieldLabel>
-          <Input value={name} onChange={(e) => setName(e.target.value)} />
+          <Input
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+          />
         </Field>
 
         <Field>
           <FieldLabel>Email</FieldLabel>
-          <Input value={email} onChange={(e) => setEmail(e.target.value)} />
+          <Input
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+          />
         </Field>
 
         <Field>

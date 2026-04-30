@@ -34,10 +34,11 @@ export default function DashboardLayout({
 
   useEffect(() => {
     const checkUser = async () => {
-      const { data } = await supabase.auth.getUser()
-      const user = data.user
+      const { data } = await supabase.auth.getSession()
+      const session = data.session
+      const user = session?.user
 
-      // ❌ brak usera → login
+      // ❌ brak sesji → login
       if (!user) {
         router.push("/login")
         return
@@ -49,7 +50,7 @@ export default function DashboardLayout({
         return
       }
 
-      // ✅ user OK
+      // ✅ OK
       setUserData({
         email: user.email,
         name:
@@ -75,7 +76,6 @@ export default function DashboardLayout({
     )
   }
 
-  // 🔥 breadcrumb
   const segments = pathname.split("/").filter(Boolean)
 
   return (
@@ -135,7 +135,6 @@ export default function DashboardLayout({
           </Breadcrumb>
         </header>
 
-        {/* 🔥 CONTENT */}
         <div className="flex flex-1 flex-col gap-4 p-4">
           {children}
         </div>
