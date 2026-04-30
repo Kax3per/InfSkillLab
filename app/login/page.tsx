@@ -10,12 +10,24 @@ export default function LoginPage() {
       <div className="flex flex-col gap-4 p-6 md:p-10">
         <div className="flex justify-center gap-2 md:justify-start">
             </div>
-             <Image 
-              src="/images/infskillslab.png"
-              alt="logo"
-              width={150}
-              height={40}
-              />
+          
+                    <Image
+                      src="/images/logoBlack.png"
+                      alt="logo"
+                      width={140}
+                      height={40}
+                      className="dark:hidden"
+                      priority
+                    />
+          
+                    <Image
+                      src="/images/logoWhite.png"
+                      alt="logo"
+                      width={140}
+                      height={40}
+                      className="hidden dark:block"
+                      priority
+                    />
         <div className="flex flex-1 items-center justify-center">
           <div className="w-full max-w-xs">
             <LoginForm />

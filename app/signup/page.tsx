@@ -11,12 +11,24 @@ export default function SignupPage() {
         <div className="flex justify-center gap-2 md:justify-start">
           <a href="#" className="flex items-center gap-2 font-medium">
           </a>
-            <Image 
-            src="/images/infskillslab.png"
-            alt="logo"
-            width={150}
-            height={40}
-             />
+           
+                     <Image
+                       src="/images/logoBlack.png"
+                       alt="logo"
+                       width={140}
+                       height={40}
+                       className="dark:hidden"
+                       priority
+                     />
+           
+                     <Image
+                       src="/images/logoWhite.png"
+                       alt="logo"
+                       width={140}
+                       height={40}
+                       className="hidden dark:block"
+                       priority
+                     />
         </div>
         <div className="flex flex-1 items-center justify-center">
           <div className="w-full max-w-xs">

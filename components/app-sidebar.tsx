@@ -2,10 +2,12 @@
 
 import * as React from "react"
 import Image from "next/image"
+import Link from "next/link"
+
+import { Settings, BookOpenIcon } from "lucide-react"
 
 import { NavMain } from "@/components/nav-main"
 import { NavUser } from "@/components/nav-user"
-import { BookOpenIcon } from "lucide-react"
 
 import {
   Sidebar,
@@ -15,12 +17,12 @@ import {
   SidebarRail,
 } from "@/components/ui/sidebar"
 
-// 🔥 TWOJE MENU
+// 🔥 MENU
 const data = {
   navMain: [
     {
       title: "Egzamin",
-      icon: <BookOpenIcon/>,
+      icon: <BookOpenIcon />,
       items: [
         {
           title: "INF 03",
@@ -54,31 +56,55 @@ export function AppSidebar({
 }: React.ComponentProps<typeof Sidebar> & { user: any }) {
   return (
     <Sidebar collapsible="icon" {...props}>
-      
+
       {/* 🔥 LOGO */}
- <SidebarHeader>
-<div className="flex items-center j h-16">
-  <Image
-    src="/images/infskillslab.png"
-    alt="logo"
-    width={90}
-    height={40}
-    className="
-      object-contain
-      transition-transform
-      duration-300
-      group-data-[collapsible=icon]:scale-125
-    "
-  />
-</div>
-</SidebarHeader>
+      <SidebarHeader>
+        <div className="flex items-center h-16">
+
+          <Image
+            src="/images/logoBlack.png"
+            alt="logo"
+            width={140}
+            height={40}
+            className="dark:hidden"
+            priority
+          />
+
+          <Image
+            src="/images/logoWhite.png"
+            alt="logo"
+            width={140}
+            height={40}
+            className="hidden dark:block"
+            priority
+          />
+
+        </div>
+      </SidebarHeader>
 
       {/* 🔥 MENU */}
       <SidebarContent>
+
+        {/* SETTINGS BUTTON */}
+        <div className="px-2 py-2">
+          <Link href="/dashboard/settings">
+            <button
+              className="
+                w-full flex items-center gap-2 px-3 py-2
+                rounded-xl hover:bg-muted transition
+              "
+            >
+              <Settings className="w-4 h-4" />
+              <span>Ustawienia</span>
+            </button>
+          </Link>
+        </div>
+
         <NavMain items={data.navMain} />
+
       </SidebarContent>
 
-      {/* 🔥 USER (email / github) */}
+      {/* USER */}
       <SidebarFooter>
         <NavUser user={user} />
       </SidebarFooter>

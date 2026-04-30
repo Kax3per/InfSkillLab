@@ -1,4 +1,5 @@
 "use client"
+
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 import {
@@ -14,7 +15,10 @@ import { useState } from "react"
 import { supabase } from "@/lib/supabase"
 import { useRouter } from "next/navigation"
 
-export function SignupForm({ className, ...props }: React.ComponentProps<"form">) {
+export function SignupForm({
+  className,
+  ...props
+}: React.ComponentProps<"form">) {
   const [name, setName] = useState("")
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
@@ -26,18 +30,26 @@ export function SignupForm({ className, ...props }: React.ComponentProps<"form">
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
 
-    if (!name.trim()) return toast.info("Podaj imię", { position: "top-center" })
-    if (!email.trim()) return toast.info("Podaj email", { position: "top-center" })
-    if (!password.trim()) return toast.info("Podaj hasło", { position: "top-center" })
-    if (password !== confirmPassword) return toast.warning("Hasła nie są takie same", { position: "top-center" })
-    if (!email.includes("@")) return toast.warning("Niepoprawny email", { position: "top-center" })
-    if (password.length < 8) return toast.error("Min 8 znaków", { position: "top-center" })
+    // 🔥 VALIDATION
+    if (!name.trim()) return toast.info("Podaj imię")
+    if (!email.trim()) return toast.info("Podaj email")
+    if (!password.trim()) return toast.info("Podaj hasło")
+    if (!email.includes("@")) return toast.warning("Niepoprawny email")
+    if (password.length < 8) return toast.error("Min. 8 znaków")
+    if (password !== confirmPassword)
+      return toast.warning("Hasła nie są takie same")
 
     setLoading(true)
 
+    // 🔥 SIGN UP
     const { data, error } = await supabase.auth.signUp({
       email,
       password,
+      options: {
+        data: {
+          name, // zapis do user_metadata
+        },
+      },
     })
 
     if (error) {
@@ -47,48 +59,47 @@ export function SignupForm({ className, ...props }: React.ComponentProps<"form">
     }
 
     if (!data.user) {
-      toast.error("Brak usera z auth")
+      toast.error("Błąd tworzenia użytkownika")
       setLoading(false)
       return
     }
 
-    const { error: dbError } = await supabase.from("User").insert([
-      {
+    // 🔥 PROFILE INSERT (NIE BLOKUJE FLOW)
+    try {
+      await supabase.from("profiles").upsert({
         id: data.user.id,
         email: data.user.email,
-      },
-    ])
-
-    if (dbError) {
-      console.log("DB ERROR:", dbError)
-      toast.error("Błąd zapisu do bazy")
-      setLoading(false)
-      return
+      })
+    } catch (err) {
+      console.log("Profile error (ignored):", err)
     }
 
-    toast.success("Konto utworzone!")
+    toast.success("📩 Sprawdź email i potwierdź konto")
 
-    setTimeout(() => {
-      router.push("/login")
-    }, 1000)
+    router.push("/verify-email")
 
     setLoading(false)
   }
 
-    const handleGithubLogin = async () => {
-  const { error } = await supabase.auth.signInWithOAuth({
-    provider: "github",
-    options: {
-      redirectTo: `${window.location.origin}/dashboard`,
-    },
-  })
+  const handleGithubLogin = async () => {
+    const { error } = await supabase.auth.signInWithOAuth({
+      provider: "github",
+      options: {
+        redirectTo: `${window.location.origin}/dashboard`,
+      },
+    })
 
-  if (error) {
-    toast.error("Błąd logowania GitHub")
+    if (error) {
+      toast.error("Błąd logowania GitHub")
+    }
   }
-}
+
   return (
-    <form onSubmit={handleSubmit} className={cn("flex flex-col gap-6", className)} {...props}>
+    <form
+      onSubmit={handleSubmit}
+      className={cn("flex flex-col gap-6", className)}
+      {...props}
+    >
       <FieldGroup>
         <div className="flex flex-col items-center gap-2 text-center">
           <h1 className="text-2xl font-bold">Zarejestruj się</h1>
@@ -109,17 +120,25 @@ export function SignupForm({ className, ...props }: React.ComponentProps<"form">
 
         <Field>
           <FieldLabel>Hasło</FieldLabel>
-          <Input type="password" value={password} onChange={(e) => setPassword(e.target.value)} />
+          <Input
+            type="password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+          />
           <FieldDescription>Min. 8 znaków</FieldDescription>
         </Field>
 
         <Field>
           <FieldLabel>Powtórz hasło</FieldLabel>
-          <Input type="password" value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} />
+          <Input
+            type="password"
+            value={confirmPassword}
+            onChange={(e) => setConfirmPassword(e.target.value)}
+          />
         </Field>
 
         <Field>
-          <Button type="submit" disabled={loading} className=" " >
+          <Button type="submit" disabled={loading}>
             {loading ? "Tworzenie..." : "Stwórz konto"}
           </Button>
         </Field>
@@ -127,33 +146,12 @@ export function SignupForm({ className, ...props }: React.ComponentProps<"form">
         <FieldSeparator>Zaloguj się za pomocą</FieldSeparator>
 
         <Field>
-          <Button variant="outline" type="button" onClick={handleGithubLogin}
+          <Button
+            variant="outline"
+            type="button"
+            onClick={handleGithubLogin}
           >
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
-              <path
-                d="M12 .297c-6.63 0-12 5.373-12 12 
-                0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 
-                0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61 
-                C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 
-                1.205.084 1.838 1.236 1.838 1.236 
-                1.07 1.835 2.809 1.305 3.495.998 
-                .108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 
-                0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 
-                0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 
-                1.02.006 2.04.138 3 .405 
-                2.28-1.552 3.285-1.23 3.285-1.23 
-                .645 1.653.24 2.873.12 3.176 
-                .765.84 1.23 1.91 1.23 3.22 
-                0 4.61-2.805 5.625-5.475 5.92 
-                .42.36.81 1.096.81 2.22 
-                0 1.606-.015 2.896-.015 3.286 
-                0 .315.21.69.825.57 
-                C20.565 22.092 24 17.592 24 12.297 
-                c0-6.627-5.373-12-12-12"
-                fill="currentColor"
-              />
-            </svg>
-            Sign up with GitHub
+            GitHub
           </Button>
 
           <div className="px-6 text-sm text-center">
