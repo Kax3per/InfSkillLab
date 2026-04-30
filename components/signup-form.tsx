@@ -42,16 +42,28 @@ export function SignupForm({
     setLoading(true)
 
     // 🔥 SIGN UP
-    const { data, error } = await supabase.auth.signUp({
-      email,
-      password,
-      options: {
-        data: {
-          name, // zapis do user_metadata
-        },
-      },
-    })
+ const { data, error } = await supabase.auth.signUp({
+  email,
+  password,
+  options: {
+    emailRedirectTo: `${window.location.origin}/auth/callback`,
+  },
+})
 
+const confirmUrl = `${window.location.origin}/auth/confirm?token=${data.session?.access_token}`
+
+await fetch("/api/send-email", {
+  method: "POST",
+  body: JSON.stringify({
+    email,
+    confirmUrl,
+  }),
+})
+
+await supabase.auth.resend({
+  type: "signup",
+  email,
+})
     if (error) {
       toast.error(error.message)
       setLoading(false)

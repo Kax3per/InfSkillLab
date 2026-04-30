@@ -1,25 +1,20 @@
 "use client"
 
 import { useEffect } from "react"
-import { useRouter } from "next/navigation"
 import { supabase } from "@/lib/supabase"
+import { useRouter } from "next/navigation"
 
-export default function Callback() {
+export default function AuthCallback() {
   const router = useRouter()
 
   useEffect(() => {
-    const handleAuth = async () => {
-      const { data } = await supabase.auth.getUser()
-
-      if (data.user) {
-        router.push("/dashboard")
-      } else {
-        router.push("/login")
-      }
+    const run = async () => {
+      await supabase.auth.getSession()
+      router.push("/dashboard")
     }
 
-    handleAuth()
-  }, [])
+    run()
+  }, [router])
 
- 
+  return <div className="h-screen flex items-center justify-center">Logowanie...</div>
 }
