@@ -64,6 +64,9 @@ useEffect(() => {
 
     toast.success("Hasło zmienione 🎉")
 
+      await supabase.auth.signOut()
+  window.location.href = "/login"
+
     setTimeout(() => {
       router.push("/login")
     }, 1500)
