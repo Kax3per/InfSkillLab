@@ -25,30 +25,12 @@ useEffect(() => {
     const hash = window.location.hash
 
     if (!hash || !hash.includes("access_token")) {
-      toast.error("Nieprawidłowy lub wygasły link")
+      toast.error("Nieprawidłowy link")
       return
     }
 
-    const params = new URLSearchParams(hash.replace("#", ""))
-
-    const access_token = params.get("access_token")
-    const refresh_token = params.get("refresh_token")
-
-    if (!access_token || !refresh_token) {
-      toast.error("Brak tokenów")
-      return
-    }
-
-    const { error } = await supabase.auth.setSession({
-      access_token,
-      refresh_token,
-    })
-
-    if (error) {
-      console.error(error)
-      toast.error("Błąd sesji")
-      return
-    }
+    // 👉 NIE ustawiamy sesji
+    // tylko pozwalamy Supabase działać na tym tokenie
 
     setReady(true)
   }
