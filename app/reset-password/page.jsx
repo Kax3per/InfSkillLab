@@ -22,39 +22,56 @@ export default function ResetPasswordPage() {
   // 🔥 KLUCZOWE – pobranie sesji z linka
 useEffect(() => {
   const init = async () => {
+    const url = window.location.href
+
+    console.log("RESET URL:", url)
+
+    // 🟢 CASE 1: ?code=
+    if (url.includes("code=")) {
+      const { error } = await supabase.auth.exchangeCodeForSession(url)
+
+      if (error) {
+        toast.error("Błąd sesji (code)")
+        return
+      }
+
+      setReady(true)
+      return
+    }
+
+    // 🔴 CASE 2: #access_token
     const hash = window.location.hash
 
-    if (!hash || !hash.includes("access_token")) {
-      toast.error("Nieprawidłowy link resetu")
+    if (hash.includes("access_token")) {
+      const params = new URLSearchParams(hash.replace("#", ""))
+
+      const access_token = params.get("access_token")
+      const refresh_token = params.get("refresh_token")
+
+      if (!access_token || !refresh_token) {
+        toast.error("Brak tokenów")
+        return
+      }
+
+      const { error } = await supabase.auth.setSession({
+        access_token,
+        refresh_token,
+      })
+
+      if (error) {
+        toast.error("Błąd sesji (token)")
+        return
+      }
+
+      setReady(true)
       return
     }
 
-    const params = new URLSearchParams(hash.replace("#", ""))
-
-    const access_token = params.get("access_token")
-    const refresh_token = params.get("refresh_token")
-
-    if (!access_token || !refresh_token) {
-      toast.error("Brak tokenu")
-      return
-    }
-
-    const { error } = await supabase.auth.setSession({
-      access_token,
-      refresh_token,
-    })
-
-    if (error) {
-      toast.error("Nie udało się ustawić sesji")
-      return
-    }
-
-    setReady(true)
+    toast.error("Nieprawidłowy link resetu")
   }
 
   init()
 }, [])
-
   const handleReset = async () => {
     if (password.length < 8) {
       toast.error("Hasło musi mieć min. 8 znaków")
