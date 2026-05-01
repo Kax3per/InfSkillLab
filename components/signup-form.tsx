@@ -51,7 +51,7 @@ const { data, error } = await supabase.auth.signUp({
 })
    if (error) {
   if (error.message.includes("rate limit")) {
-    toast.error("Za dużo prób. Spróbuj za chwilę.")
+    toast.error("Za dużo prób. Spróbuj za chwilę." , {position: "top-center"})
     return
   }
 
@@ -59,7 +59,7 @@ const { data, error } = await supabase.auth.signUp({
 }
 
     if (!data.user) {
-      toast.error("Błąd tworzenia użytkownika")
+      toast.error("Błąd tworzenia użytkownika" , {position: "top-center"})
       setLoading(false)
       return
     }
@@ -77,7 +77,7 @@ const { data, error } = await supabase.auth.signUp({
       console.log("Profile error (ignored):", err)
     }
 
-    toast.success("📩 Sprawdź email i potwierdź konto")
+    toast.success("📩 Sprawdź email i potwierdź konto" , {position: "top-center"})
 
     router.push("/verify-email")
 
@@ -94,7 +94,7 @@ const { data, error } = await supabase.auth.signUp({
     })
 
     if (error) {
-      toast.error("Błąd logowania GitHub")
+      toast.error("Błąd logowania GitHub", {position: "top-center"} )
     }
   }
 

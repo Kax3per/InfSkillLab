@@ -9,8 +9,6 @@ import { toast } from "sonner"
 import { Card, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Switch } from "@/components/ui/switch"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
 
 import {
   Avatar,
@@ -30,7 +28,6 @@ import {
   User,
   Lock,
   Palette,
-  LogOut,
 } from "lucide-react"
 
 import {
@@ -53,8 +50,6 @@ export default function SettingsPage() {
   const [preview, setPreview] = useState<string | null>(null)
   const fileInputRef = useRef<HTMLInputElement | null>(null)
 
-  const [password, setPassword] = useState("")
-  const [repeatPassword, setRepeatPassword] = useState("")
   const [loading, setLoading] = useState(false)
   const [provider, setProvider] = useState<string | null>(null)
 
@@ -64,7 +59,7 @@ export default function SettingsPage() {
     router.push("/login")
   }
 
-  // 🔥 LOAD USER + AVATAR
+  // 🔥 LOAD USER
   useEffect(() => {
     const loadUser = async () => {
       const { data } = await supabase.auth.getUser()
@@ -126,27 +121,23 @@ export default function SettingsPage() {
       .eq("id", user.id)
 
     setAvatar(publicUrl)
-
-    window.dispatchEvent(new Event("avatar-updated"))
     setTimeout(() => setPreview(null), 1500)
   }
 
-  // 🔥 PASSWORD
-  const handleChangePassword = async () => {
-    if (password.length < 6) {
-      toast.error("Min. 6 znaków")
-      return
-    }
+  // 🔥 RESET PASSWORD
+  const handleSendReset = async () => {
+    const { data } = await supabase.auth.getUser()
+    const email = data.user?.email
 
-    if (password !== repeatPassword) {
-      toast.error("Hasła nie są takie same")
+    if (!email) {
+      toast.error("Brak emaila")
       return
     }
 
     setLoading(true)
 
-    const { error } = await supabase.auth.updateUser({
-      password,
+    const { error } = await supabase.auth.resetPasswordForEmail(email, {
+      redirectTo: "https://infskillslab.vercel.app/reset-password",
     })
 
     setLoading(false)
@@ -156,28 +147,25 @@ export default function SettingsPage() {
       return
     }
 
-    toast.success("Hasło zmienione")
-
-    setPassword("")
-    setRepeatPassword("")
+    toast.success("Sprawdź email, aby zmienić hasło")
   }
 
   return (
     <div className="w-full max-w-5xl px-12 py-10 ml-6">
 
-      {/* 🔥 HEADER */}
+      {/* HEADER */}
       <div className="flex items-center gap-4 mb-12">
         <Settings className="w-7 h-7" />
-        <h1 className="text-4xl font-semibold tracking-tight">
+        <h1 className="text-4xl font-semibold">
           Ustawienia
         </h1>
       </div>
 
       <Accordion type="single" collapsible className="space-y-6">
 
-        {/* 🔥 WYGLĄD */}
+        {/* WYGLĄD */}
         <AccordionItem value="appearance" className="border rounded-2xl px-5">
-          <AccordionTrigger className="text-lg py-6 flex items-center gap-3">
+          <AccordionTrigger className="py-6 flex gap-3">
             <Palette className="w-5 h-5" />
             Wygląd
           </AccordionTrigger>
@@ -185,13 +173,7 @@ export default function SettingsPage() {
           <AccordionContent>
             <Card className="border-0 shadow-none">
               <CardContent className="flex justify-between items-center py-6">
-
-                <div>
-                  <p className="font-medium">Tryb ciemny</p>
-                  <p className="text-sm text-muted-foreground">
-                    Zmień wygląd aplikacji
-                  </p>
-                </div>
+                <p>Tryb ciemny</p>
 
                 <Switch
                   checked={theme === "dark"}
@@ -204,9 +186,9 @@ export default function SettingsPage() {
           </AccordionContent>
         </AccordionItem>
 
-        {/* 🔥 PROFIL */}
+        {/* PROFIL */}
         <AccordionItem value="profile" className="border rounded-2xl px-5">
-          <AccordionTrigger className="text-lg py-6 flex items-center gap-3">
+          <AccordionTrigger className="py-6 flex gap-3">
             <User className="w-5 h-5" />
             Profil
           </AccordionTrigger>
@@ -215,22 +197,18 @@ export default function SettingsPage() {
             <Card className="border-0 shadow-none">
               <CardContent className="py-6">
 
-                <div className="flex items-center">
+                <div className="flex items-center gap-6">
 
-                  <div className="flex items-center gap-6">
-                    <Avatar className="w-20 h-20">
-                      <AvatarImage src={preview || avatar || ""} />
-                      <AvatarFallback>U</AvatarFallback>
-                    </Avatar>
+                  <Avatar className="w-20 h-20">
+                    <AvatarImage src={preview || avatar || ""} />
+                    <AvatarFallback>U</AvatarFallback>
+                  </Avatar>
 
-                    <div>
-                      <p className="font-medium">
-                        Zdjęcie profilowe
-                      </p>
-                      <p className="text-sm text-muted-foreground">
-                        PNG, JPG max 2MB
-                      </p>
-                    </div>
+                  <div>
+                    <p className="font-medium">Zdjęcie profilowe</p>
+                    <p className="text-sm text-muted-foreground">
+                      PNG, JPG max 2MB
+                    </p>
                   </div>
 
                   <div className="ml-auto">
@@ -244,7 +222,6 @@ export default function SettingsPage() {
 
                     <Button
                       variant="outline"
-                      className="min-w-[150px]"
                       onClick={() => fileInputRef.current?.click()}
                     >
                       Wybierz zdjęcie
@@ -258,95 +235,64 @@ export default function SettingsPage() {
           </AccordionContent>
         </AccordionItem>
 
-        {/* 🔥 HASŁO */}
+        {/* HASŁO */}
         {provider !== "github" && (
           <AccordionItem value="security" className="border rounded-2xl px-5">
-            <AccordionTrigger className="text-lg py-6 flex items-center gap-3">
+            <AccordionTrigger className="py-6 flex gap-3">
               <Lock className="w-5 h-5" />
               Bezpieczeństwo
             </AccordionTrigger>
 
             <AccordionContent>
               <Card className="border-0 shadow-none">
-                <CardContent className="py-8 space-y-6 max-w-xl">
+                <CardContent className="space-y-4">
 
-                  <div className="space-y-2">
-                    <Label>Nowe hasło</Label>
-                    <Input
-                      type="password"
-                      value={password}
-                      onChange={(e) => setPassword(e.target.value)}
-                    />
-                  </div>
+                  <p className="text-sm text-muted-foreground">
+                    Wyślemy Ci link do zmiany hasła
+                  </p>
 
-                  <div className="space-y-2">
-                    <Label>Powtórz hasło</Label>
-                    <Input
-                      type="password"
-                      value={repeatPassword}
-                      onChange={(e) =>
-                        setRepeatPassword(e.target.value)
-                      }
-                    />
-                  </div>
-
-                  <Button
-                    onClick={handleChangePassword}
-                    disabled={loading}
-                  >
+                  <Button onClick={handleSendReset} disabled={loading}>
                     Zmień hasło
                   </Button>
 
                 </CardContent>
               </Card>
+
+              {/* LOGOUT */}
+              <div className="mt-10 border-t pt-6">
+                <AlertDialog>
+                  <AlertDialogTrigger asChild>
+                    <Button
+                      variant="destructive"
+                      className="w-full h-12 text-base"
+                    >
+                      Wyloguj się
+                    </Button>
+                  </AlertDialogTrigger>
+
+                  <AlertDialogContent>
+                    <AlertDialogHeader>
+                      <AlertDialogTitle>
+                        Czy na pewno chcesz się wylogować?
+                      </AlertDialogTitle>
+                      <AlertDialogDescription>
+                        Zostaniesz wylogowany z konta.
+                      </AlertDialogDescription>
+                    </AlertDialogHeader>
+
+                    <AlertDialogFooter>
+                      <AlertDialogCancel>Anuluj</AlertDialogCancel>
+                      <AlertDialogAction onClick={handleLogout}>
+                        Wyloguj
+                      </AlertDialogAction>
+                    </AlertDialogFooter>
+                  </AlertDialogContent>
+                </AlertDialog>
+              </div>
+
             </AccordionContent>
           </AccordionItem>
         )}
-
-        {/* 🔥 KONTO */}
-       <div className="mt-10 border-t pt-6">
-
-  <AlertDialog>
-    <AlertDialogTrigger asChild>
-      <Button
-        variant="destructive"
-        className="w-full h-12 text-base"
-      >
-        Wyloguj się
-      </Button>
-    </AlertDialogTrigger>
-
-    <AlertDialogContent>
-
-      <AlertDialogHeader>
-        <AlertDialogTitle>
-          Czy na pewno chcesz się wylogować?
-        </AlertDialogTitle>
-
-        <AlertDialogDescription>
-          Zostaniesz wylogowany z konta i będziesz musiał zalogować się ponownie.
-        </AlertDialogDescription>
-      </AlertDialogHeader>
-
-      <AlertDialogFooter>
-
-        <AlertDialogCancel>
-          Anuluj
-        </AlertDialogCancel>
-
-        <AlertDialogAction
-          onClick={handleLogout}
-          className="bg-red-500 hover:bg-red-600"
-        >
-          Wyloguj
-        </AlertDialogAction>
-
-      </AlertDialogFooter>
-
-    </AlertDialogContent>
-  </AlertDialog>
-
-</div>
 
       </Accordion>
     </div>

@@ -51,7 +51,7 @@ export function LoginForm({
       return
     }
 
-    toast.success("Zalogowano!")
+    toast.success("Zalogowano!" , {position: "top-center"})
     router.push("/dashboard")
   }
 
