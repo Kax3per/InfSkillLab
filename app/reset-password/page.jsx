@@ -22,52 +22,25 @@ export default function ResetPasswordPage() {
   // 🔥 KLUCZOWE – pobranie sesji z linka
 useEffect(() => {
   const init = async () => {
-    const url = window.location.href
-
-    console.log("RESET URL:", url)
-
-    // 🟢 CASE 1: ?code=
-    if (url.includes("code=")) {
-      const { error } = await supabase.auth.exchangeCodeForSession(url)
+    try {
+      const { data, error } = await supabase.auth.exchangeCodeForSession()
 
       if (error) {
-        toast.error("Błąd sesji (code)")
+        console.error(error)
+        toast.error("Link wygasł lub niepoprawny")
+        return
+      }
+
+      if (!data.session) {
+        toast.error("Brak sesji")
         return
       }
 
       setReady(true)
-      return
+    } catch (err) {
+      console.error(err)
+      toast.error("Błąd podczas logowania")
     }
-
-    // 🔴 CASE 2: #access_token
-    const hash = window.location.hash
-
-    if (hash.includes("access_token")) {
-      const params = new URLSearchParams(hash.replace("#", ""))
-
-      const access_token = params.get("access_token")
-      const refresh_token = params.get("refresh_token")
-
-      if (!access_token || !refresh_token) {
-        toast.error("Brak tokenów")
-        return
-      }
-
-      const { error } = await supabase.auth.setSession({
-        access_token,
-        refresh_token,
-      })
-
-      if (error) {
-        toast.error("Błąd sesji (token)")
-        return
-      }
-
-      setReady(true)
-      return
-    }
-
-    toast.error("Nieprawidłowy link resetu")
   }
 
   init()
