@@ -38,6 +38,23 @@ export default function ResetPasswordPage() {
     toast.success("Hasło zmienione")
   }
 
+  import { useEffect } from "react"
+useEffect(() => {
+  const handleSession = async () => {
+    const hash = window.location.hash
+
+    if (hash.includes("access_token")) {
+      const { error } = await supabase.auth.exchangeCodeForSession(window.location.href)
+
+      if (error) {
+        console.error(error)
+      }
+    }
+  }
+
+  handleSession()
+}, [])
+
   return (
     <div className="max-w-md mx-auto mt-20 space-y-4">
       <Input
