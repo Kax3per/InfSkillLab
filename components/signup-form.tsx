@@ -42,17 +42,13 @@ export function SignupForm({
     setLoading(true)
 
     // 🔥 SIGNUP (TYLKO SUPABASE)
-    const { data, error } = await supabase.auth.signUp({
-      email,
-      password,
-      options: {
-        emailRedirectTo: `${window.location.origin}/auth/callback`,
-        data: {
-          name,
-        },
-      },
-    })
-
+const { data, error } = await supabase.auth.signUp({
+  email,
+  password,
+  options: {
+    emailRedirectTo: `${window.location.origin}/auth/callback`,
+  },
+})
     if (error) {
       toast.error(error.message)
       setLoading(false)
