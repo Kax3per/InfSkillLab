@@ -21,14 +21,20 @@ export default function ResetPasswordPage() {
 
   // 🔥 KLUCZOWE – pobranie sesji z linka
 useEffect(() => {
-  const hash = window.location.hash
+  const init = async () => {
+    const { error } = await supabase.auth.exchangeCodeForSession(
+      window.location.href
+    )
 
-  if (!hash || !hash.includes("access_token")) {
-    toast.error("Nieprawidłowy link")
-    return
+    if (error) {
+      toast.error("Link wygasł lub niepoprawny")
+      return
+    }
+
+    setReady(true)
   }
 
-  setReady(true)
+  init()
 }, [])
 const handleReset = async () => {
   if (password.length < 8) {
