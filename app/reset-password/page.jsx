@@ -38,7 +38,7 @@ export default function ResetPasswordPage() {
     toast.success("Hasło zmienione")
   }
 
-  import { useEffect } from "react"
+  
 useEffect(() => {
   const handleSession = async () => {
     const hash = window.location.hash
