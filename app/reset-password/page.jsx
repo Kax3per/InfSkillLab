@@ -36,37 +36,34 @@ useEffect(() => {
 
   init()
 }, [])
-  const handleReset = async () => {
-    if (password.length < 8) {
-      toast.error("Hasło musi mieć min. 8 znaków")
-      return
-    }
-
-    if (password !== repeat) {
-      toast.error("Hasła nie są takie same")
-      return
-    }
-
-    setLoading(true)
-
-    const { error } =await supabase.auth.updateUser(
-  { password },
-  { accessToken: window.location.hash.split("access_token=")[1].split("&")[0] }
-)
-
-    setLoading(false)
-
-    if (error) {
-      toast.error(error.message)
-      return
-    }
-
-    toast.success("Hasło zmienione 🎉")
-
-    setTimeout(() => {
-      router.push("/login")
-    }, 1500)
+const handleReset = async () => {
+  if (password.length < 8) {
+    toast.error("Hasło musi mieć min. 8 znaków")
+    return
   }
+
+  if (password !== repeat) {
+    toast.error("Hasła nie są takie same")
+    return
+  }
+
+  setLoading(true)
+
+  const { error } = await supabase.auth.updateUser({
+    password,
+  })
+
+  setLoading(false)
+
+  if (error) {
+    toast.error(error.message)
+    return
+  }
+
+  toast.success("Hasło zmienione 🎉")
+
+  window.location.href = "/login"
+}
 
   // 🔥 loading zanim sesja się ustawi
   if (!ready) {
