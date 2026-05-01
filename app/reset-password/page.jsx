@@ -22,9 +22,7 @@ export default function ResetPasswordPage() {
   // 🔥 KLUCZOWE – pobranie sesji z linka
 useEffect(() => {
   const init = async () => {
-    const { error } = await supabase.auth.exchangeCodeForSession(
-      window.location.href
-    )
+  
 
     if (error) {
       toast.error("Link wygasł lub niepoprawny")
@@ -49,9 +47,10 @@ const handleReset = async () => {
 
   setLoading(true)
 
-  const { error } = await supabase.auth.updateUser({
-    password,
-  })
+const { error } = await supabase.auth.updateUser(
+  { password },
+  { accessToken: window.location.hash.split("access_token=")[1].split("&")[0] }
+)
 
   setLoading(false)
 
