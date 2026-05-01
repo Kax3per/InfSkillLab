@@ -135,10 +135,9 @@ export default function SettingsPage() {
     }
 
     setLoading(true)
-
-    const { error } = await supabase.auth.resetPasswordForEmail(email, {
-      redirectTo: "https://infskillslab.vercel.app/reset-password",
-    })
+const { error } = await supabase.auth.resetPasswordForEmail(email, {
+  redirectTo: "https://infskillslab.vercel.app/reset-password",
+})
 
     setLoading(false)
 
