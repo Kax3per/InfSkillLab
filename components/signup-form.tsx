@@ -52,6 +52,7 @@ const { data, error } = await supabase.auth.signUp({
     if (error) {
       toast.error(error.message)
       setLoading(false)
+      console.log("ERROR:", error)
       return
     }
 
