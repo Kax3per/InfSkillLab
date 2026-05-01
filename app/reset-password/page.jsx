@@ -20,20 +20,40 @@ export default function ResetPasswordPage() {
   const [showRepeat, setShowRepeat] = useState(false)
 
   // 🔥 KLUCZOWE – pobranie sesji z linka
-  useEffect(() => {
-    const init = async () => {
-      const { error } = await supabase.auth.getSessionFromUrl()
+useEffect(() => {
+  const init = async () => {
+    const hash = window.location.hash
 
-      if (error) {
-        toast.error("Link resetu jest nieprawidłowy lub wygasł")
-        return
-      }
-
-      setReady(true)
+    if (!hash || !hash.includes("access_token")) {
+      toast.error("Nieprawidłowy link resetu")
+      return
     }
 
-    init()
-  }, [])
+    const params = new URLSearchParams(hash.replace("#", ""))
+
+    const access_token = params.get("access_token")
+    const refresh_token = params.get("refresh_token")
+
+    if (!access_token || !refresh_token) {
+      toast.error("Brak tokenu")
+      return
+    }
+
+    const { error } = await supabase.auth.setSession({
+      access_token,
+      refresh_token,
+    })
+
+    if (error) {
+      toast.error("Nie udało się ustawić sesji")
+      return
+    }
+
+    setReady(true)
+  }
+
+  init()
+}, [])
 
   const handleReset = async () => {
     if (password.length < 8) {
