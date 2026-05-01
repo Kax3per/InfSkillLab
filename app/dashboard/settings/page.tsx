@@ -125,30 +125,28 @@ export default function SettingsPage() {
   }
 
   // 🔥 RESET PASSWORD
-  const handleSendReset = async () => {
-    const { data } = await supabase.auth.getUser()
-    const email = data.user?.email
+const handleSendReset = async () => {
+  const { data } = await supabase.auth.getUser()
+  const email = data.user?.email
 
-    if (!email) {
-      toast.error("Brak emaila")
-      return
-    }
-
-    setLoading(true)
-
-    const { error } = await supabase.auth.resetPasswordForEmail(email, {
-      redirectTo: "https://infskillslab.vercel.app/reset-password",
-    })
-
-    setLoading(false)
-
-    if (error) {
-      toast.error(error.message)
-      return
-    }
-
-    toast.success("Sprawdź email, aby zmienić hasło")
+  if (!email) {
+    toast.error("Brak emaila")
+    return
   }
+
+  setLoading(true)
+
+  const { error } = await supabase.auth.resetPasswordForEmail(email)
+
+  setLoading(false)
+
+  if (error) {
+    toast.error(error.message)
+    return
+  }
+
+  toast.success("Sprawdź email, aby zmienić hasło")
+}
 
   return (
     <div className="w-full max-w-5xl px-12 py-10 ml-6">
