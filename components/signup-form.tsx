@@ -49,12 +49,14 @@ const { data, error } = await supabase.auth.signUp({
     emailRedirectTo: `${window.location.origin}/auth/callback`,
   },
 })
-    if (error) {
-      toast.error(error.message)
-      setLoading(false)
-      console.log("ERROR:", error)
-      return
-    }
+   if (error) {
+  if (error.message.includes("rate limit")) {
+    toast.error("Za dużo prób. Spróbuj za chwilę.")
+    return
+  }
+
+  toast.error(error.message)
+}
 
     if (!data.user) {
       toast.error("Błąd tworzenia użytkownika")
