@@ -50,7 +50,7 @@ useEffect(() => {
 
     setLoading(true)
 
-  await supabase.auth.updateUser(
+  const {error} = await supabase.auth.updateUser(
   { password },
   { accessToken: window.location.hash.split("access_token=")[1].split("&")[0] }
 )
@@ -63,10 +63,7 @@ useEffect(() => {
     }
 
     toast.success("Hasło zmienione 🎉")
-
-    setTimeout(() => {
-      router.push("/login")
-    }, 1500)
+window.location.href = "/login"
   }
 
   // 🔥 loading zanim sesja się ustawi
