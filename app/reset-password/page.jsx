@@ -1,4 +1,4 @@
-"use client"
+ "use client"
 
 import { useState, useEffect } from "react"
 import { supabase } from "@/lib/supabase"
@@ -50,7 +50,7 @@ useEffect(() => {
 
     setLoading(true)
 
-  const {error} = await supabase.auth.updateUser(
+    const { error } =await supabase.auth.updateUser(
   { password },
   { accessToken: window.location.hash.split("access_token=")[1].split("&")[0] }
 )
@@ -63,7 +63,10 @@ useEffect(() => {
     }
 
     toast.success("Hasło zmienione 🎉")
-window.location.href = "/login"
+
+    setTimeout(() => {
+      router.push("/login")
+    }, 1500)
   }
 
   // 🔥 loading zanim sesja się ustawi
