@@ -22,15 +22,14 @@ export default function ResetPasswordPage() {
   // 🔥 KLUCZOWE – pobranie sesji z linka
 useEffect(() => {
   const init = async () => {
-    const hash = window.location.hash
+    const { error } = await supabase.auth.exchangeCodeForSession(
+      window.location.href
+    )
 
-    if (!hash || !hash.includes("access_token")) {
-      toast.error("Nieprawidłowy link")
+    if (error) {
+      toast.error("Link wygasł lub niepoprawny")
       return
     }
-
-    // 👉 NIE ustawiamy sesji
-    // tylko pozwalamy Supabase działać na tym tokenie
 
     setReady(true)
   }
