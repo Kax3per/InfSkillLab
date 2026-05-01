@@ -37,40 +37,54 @@ useEffect(() => {
 
   init()
 }, [])
-  const handleReset = async () => {
-    if (password.length < 8) {
-      toast.error("Hasło musi mieć min. 8 znaków")
-      return
-    }
-
-    if (password !== repeat) {
-      toast.error("Hasła nie są takie same")
-      return
-    }
-
-    setLoading(true)
-
-  await supabase.auth.updateUser(
-  { password },
-  { accessToken: window.location.hash.split("access_token=")[1].split("&")[0] }
-)
-
-    setLoading(false)
-
-    if (error) {
-      toast.error(error.message)
-      return
-    }
-
-    toast.success("Hasło zmienione 🎉")
-
-      await supabase.auth.signOut()
-  window.location.href = "/login"
-
-    setTimeout(() => {
-      router.push("/login")
-    }, 1500)
+const handleReset = async () => {
+  if (password.length < 8) {
+    toast.error("Hasło musi mieć min. 8 znaków")
+    return
   }
+
+  if (password !== repeat) {
+    toast.error("Hasła nie są takie same")
+    return
+  }
+
+  const hash = window.location.hash
+
+  if (!hash.includes("access_token")) {
+    toast.error("Brak tokena w linku")
+    return
+  }
+
+  const accessToken = hash
+    .split("access_token=")[1]
+    ?.split("&")[0]
+
+  if (!accessToken) {
+    toast.error("Nie udało się pobrać tokena")
+    return
+  }
+
+  setLoading(true)
+
+  const { error } = await supabase.auth.updateUser(
+    { password },
+    { accessToken }
+  )
+
+  setLoading(false)
+
+  if (error) {
+    console.error(error)
+    toast.error(error.message)
+    return
+  }
+
+  toast.success("Hasło zmienione 🎉")
+
+  // 🔐 wyloguj i redirect
+  await supabase.auth.signOut()
+  window.location.href = "/login"
+}
 
   // 🔥 loading zanim sesja się ustawi
   if (!ready) {
