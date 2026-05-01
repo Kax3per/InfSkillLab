@@ -23,7 +23,9 @@ export default function ResetPasswordPage() {
 useEffect(() => {
   const init = async () => {
     try {
-      const { data, error } = await supabase.auth.exchangeCodeForSession()
+      const { data, error } = await supabase.auth.exchangeCodeForSession(
+        window.location.href
+      )
 
       if (error) {
         console.error(error)
