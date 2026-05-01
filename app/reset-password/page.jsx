@@ -50,9 +50,10 @@ useEffect(() => {
 
     setLoading(true)
 
-    const { error } = await supabase.auth.updateUser({
-      password,
-    })
+  await supabase.auth.updateUser(
+  { password },
+  { accessToken: window.location.hash.split("access_token=")[1].split("&")[0] }
+)
 
     setLoading(false)
 
