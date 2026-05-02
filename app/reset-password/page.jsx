@@ -21,14 +21,18 @@ export default function ResetPasswordPage() {
 
   // 🔥 KLUCZOWE – pobranie sesji z linka
 useEffect(() => {
-  const hash = window.location.hash
+  const initSession = async () => {
+    const { data, error } = await supabase.auth.getSession()
 
-  if (!hash || !hash.includes("access_token")) {
-    toast.error("Nieprawidłowy link")
-    return
+    if (error || !data.session) {
+      toast.error("Link wygasł lub jest niepoprawny")
+      return
+    }
+
+    setReady(true)
   }
 
-  setReady(true)
+  initSession()
 }, [])
 const handleReset = async () => {
   if (password.length < 8) {
@@ -43,10 +47,9 @@ const handleReset = async () => {
 
   setLoading(true)
 
-const { error } = await supabase.auth.updateUser(
-  { password },
-  { accessToken: window.location.hash.split("access_token=")[1].split("&")[0] }
-)
+  const { error } = await supabase.auth.updateUser({
+    password,
+  })
 
   setLoading(false)
 
@@ -57,7 +60,7 @@ const { error } = await supabase.auth.updateUser(
 
   toast.success("Hasło zmienione 🎉")
 
-  window.location.href = "/login"
+  router.push("/login")
 }
 
   // 🔥 loading zanim sesja się ustawi
