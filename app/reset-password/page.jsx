@@ -1,4 +1,4 @@
- "use client"
+"use client"
 
 import { useState, useEffect } from "react"
 import { supabase } from "@/lib/supabase"
@@ -19,49 +19,74 @@ export default function ResetPasswordPage() {
   const [showPassword, setShowPassword] = useState(false)
   const [showRepeat, setShowRepeat] = useState(false)
 
-  // 🔥 KLUCZOWE – pobranie sesji z linka
-useEffect(() => {
-  const initSession = async () => {
-    const { data, error } = await supabase.auth.getSession()
+  // 🔥 USTAWIENIE SESJI Z LINKA (NAJWAŻNIEJSZE)
+  useEffect(() => {
+    const handleAuth = async () => {
+      const hash = window.location.hash
 
-    if (error || !data.session) {
-      toast.error("Link wygasł lub jest niepoprawny")
+      if (!hash || !hash.includes("access_token")) {
+        toast.error("Nieprawidłowy lub wygasły link")
+        return
+      }
+
+      const params = new URLSearchParams(hash.substring(1))
+
+      const access_token = params.get("access_token")
+      const refresh_token = params.get("refresh_token")
+
+      if (!access_token || !refresh_token) {
+        toast.error("Brak tokenów w linku")
+        return
+      }
+
+      const { error } = await supabase.auth.setSession({
+        access_token,
+        refresh_token,
+      })
+
+      if (error) {
+        toast.error("Nie udało się ustawić sesji")
+        return
+      }
+
+      setReady(true)
+    }
+
+    handleAuth()
+  }, [])
+
+  // 🔥 ZMIANA HASŁA
+  const handleReset = async () => {
+    if (password.length < 8) {
+      toast.error("Hasło musi mieć min. 8 znaków")
       return
     }
 
-    setReady(true)
+    if (password !== repeat) {
+      toast.error("Hasła nie są takie same")
+      return
+    }
+
+    setLoading(true)
+
+    const { error } = await supabase.auth.updateUser({
+      password,
+    })
+
+    setLoading(false)
+
+    if (error) {
+      toast.error(error.message)
+      return
+    }
+
+    // 🔥 wyloguj po zmianie (best practice)
+    await supabase.auth.signOut()
+
+    toast.success("Hasło zmienione 🎉")
+
+    router.push("/login")
   }
-
-  initSession()
-}, [])
-const handleReset = async () => {
-  if (password.length < 8) {
-    toast.error("Hasło musi mieć min. 8 znaków")
-    return
-  }
-
-  if (password !== repeat) {
-    toast.error("Hasła nie są takie same")
-    return
-  }
-
-  setLoading(true)
-
-  const { error } = await supabase.auth.updateUser({
-    password,
-  })
-
-  setLoading(false)
-
-  if (error) {
-    toast.error(error.message)
-    return
-  }
-
-  toast.success("Hasło zmienione 🎉")
-
-  router.push("/login")
-}
 
   // 🔥 loading zanim sesja się ustawi
   if (!ready) {
@@ -74,10 +99,9 @@ const handleReset = async () => {
 
   return (
     <div className="min-h-screen flex items-center justify-center px-4">
-
       <div className="w-full max-w-md space-y-6 border rounded-2xl p-8 shadow-sm">
 
-        {/* LOGO / HEADER */}
+        {/* HEADER */}
         <div className="text-center space-y-2">
           <div className="flex justify-center">
             <div className="w-12 h-12 rounded-xl bg-black text-white flex items-center justify-center">
@@ -94,9 +118,10 @@ const handleReset = async () => {
           </p>
         </div>
 
-        {/* HASŁO */}
+        {/* INPUTY */}
         <div className="space-y-4">
 
+          {/* HASŁO */}
           <div className="relative">
             <Input
               type={showPassword ? "text" : "password"}
@@ -115,7 +140,7 @@ const handleReset = async () => {
             </button>
           </div>
 
-          {/* POWTÓRZ */}
+          {/* POWTÓRZ HASŁO */}
           <div className="relative">
             <Input
               type={showRepeat ? "text" : "password"}
