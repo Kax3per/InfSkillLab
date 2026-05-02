@@ -32,41 +32,94 @@ export default function DashboardLayout({
   const [userData, setUserData] = useState<any>(null)
   const [loading, setLoading] = useState(true)
 
+  // useEffect(() => {
+  //   const checkUser = async () => {
+  //     const { data } = await supabase.auth.getSession()
+  //     const session = data.session
+  //     const user = session?.user
+
+  //     // ❌ brak sesji → login
+  //     if (!user) {
+  //       router.push("/login")
+  //       return
+  //     }
+
+  //     // ❌ brak potwierdzenia → verify
+  //     if (!user.email_confirmed_at) {
+  //       router.push("/verify-email")
+  //       return
+  //     }
+
+  //     // ✅ OK
+  //     setUserData({
+  //       email: user.email,
+  //       name:
+  //         user.user_metadata?.full_name ||
+  //         user.user_metadata?.name ||
+  //         user.email,
+  //       avatar:
+  //         user.user_metadata?.avatar_url ||
+  //         "/avatars/default.png",
+  //     })
+
+  //     setLoading(false)
+  //   }
+
+  //   checkUser()
+  // }, [router])
+
   useEffect(() => {
-    const checkUser = async () => {
-      const { data } = await supabase.auth.getSession()
-      const session = data.session
-      const user = session?.user
+  let mounted = true
 
-      // ❌ brak sesji → login
-      if (!user) {
-        router.push("/login")
-        return
-      }
+  const init = async () => {
+    const { data } = await supabase.auth.getSession()
+    const user = data.session?.user
 
-      // ❌ brak potwierdzenia → verify
-      if (!user.email_confirmed_at) {
-        router.push("/verify-email")
-        return
-      }
+    if (user && mounted) {
+      handleUser(user)
+    }
+  }
 
-      // ✅ OK
-      setUserData({
-        email: user.email,
-        name:
-          user.user_metadata?.full_name ||
-          user.user_metadata?.name ||
-          user.email,
-        avatar:
-          user.user_metadata?.avatar_url ||
-          "/avatars/default.png",
-      })
-
-      setLoading(false)
+  const handleUser = (user: any) => {
+    if (!user) {
+      router.push("/login")
+      return
     }
 
-    checkUser()
-  }, [router])
+    if (!user.email_confirmed_at) {
+      router.push("/verify-email")
+      return
+    }
+
+    setUserData({
+      email: user.email,
+      name:
+        user.user_metadata?.full_name ||
+        user.user_metadata?.name ||
+        user.email,
+      avatar:
+        user.user_metadata?.avatar_url ||
+        "/avatars/default.png",
+    })
+
+    setLoading(false)
+  }
+
+  init()
+
+  const {
+    data: { subscription },
+  } = supabase.auth.onAuthStateChange((event, session) => {
+    if (event === "SIGNED_IN" && session?.user) {
+      handleUser(session.user)
+    }
+  })
+
+  return () => {
+    mounted = false
+    subscription.unsubscribe()
+  }
+}, [router])
 
   if (loading || !userData) {
     return (
@@ -91,11 +144,9 @@ export default function DashboardLayout({
               {segments
                 .filter((seg) => seg !== "inf03" && seg !== "inf04")
                 .map((segment, index, arr) => {
-                  const href =
-                    "/" +
-                    segments
-                      .slice(0, segments.indexOf(segment) + 1)
-                      .join("/")
+                const href =
+                "/" +
+                segments.slice(0, index + 1).join("/")
 
                   const labels: Record<string, string> = {
                     dashboard: "Dashboard",
