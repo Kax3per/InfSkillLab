@@ -9,10 +9,16 @@ export default function AuthCallback() {
 
   useEffect(() => {
     const run = async () => {
-      // 🔥 NAJWAŻNIEJSZE — zapisuje session z linka
-      const { error } = await supabase.auth.exchangeCodeForSession(
-        window.location.href
-      )
+      const url = new URL(window.location.href)
+
+      const code = url.searchParams.get("code")
+
+      if (!code) {
+        router.replace("/login")
+        return
+      }
+
+      const { error } = await supabase.auth.exchangeCodeForSession(code)
 
       if (error) {
         console.error(error)
@@ -20,10 +26,7 @@ export default function AuthCallback() {
         return
       }
 
-      // 🔥 daj chwilę na zapis session
-      setTimeout(() => {
-        router.replace("/dashboard")
-      }, 300)
+      router.replace("/dashboard")
     }
 
     run()
