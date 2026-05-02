@@ -173,10 +173,10 @@ useEffect(() => {
     }
 
     // przy Google to i tak będzie true, ale zostaw jeśli chcesz
-    if (!user.email_confirmed_at) {
-      router.push("/verify-email")
-      return
-    }
+if (!user.email_confirmed_at && user.app_metadata.provider === "email") {
+  router.push("/verify-email")
+  return
+}
 
     setUserData({
       email: user.email,
