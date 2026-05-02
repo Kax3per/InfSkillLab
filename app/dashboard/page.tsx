@@ -3,6 +3,8 @@
 import { useEffect, useState } from "react"
 import { supabase } from "@/lib/supabase"
 import Link from "next/link"
+import { usePathname } from "next/navigation"
+
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 
@@ -17,6 +19,7 @@ function getRank(xp: number) {
 
 export default function DashboardPage() {
   const totalLessons = 8
+  const pathname = usePathname()
 
   const [lastDone, setLastDone] = useState(0)
   const [nextLesson, setNextLesson] = useState(1)
@@ -24,6 +27,8 @@ export default function DashboardPage() {
   const [xp, setXp] = useState(0)
 
   useEffect(() => {
+    let mounted = true
+
     const loadData = async () => {
       const { data: userData } = await supabase.auth.getUser()
       const user = userData.user
@@ -39,6 +44,8 @@ export default function DashboardPage() {
       const lessons = data?.map((l) => l.lesson) || []
 
       const last = Math.max(...lessons, 0)
+      if (!mounted) return
+
       setLastDone(last)
 
       const next = last < totalLessons ? last + 1 : totalLessons
@@ -53,11 +60,25 @@ export default function DashboardPage() {
         .eq("id", user.id)
         .single()
 
-      if (profile) setXp(profile.xp || 0)
+      if (profile && mounted) {
+        setXp(profile.xp || 0)
+      }
     }
 
     loadData()
-  }, [])
+
+    // 🔥 ważne — reaguje na login / refresh sesji
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange(() => {
+      loadData()
+    })
+
+    return () => {
+      mounted = false
+      subscription.unsubscribe()
+    }
+  }, [pathname]) // 🔥 KLUCZ — odświeża po powrocie z lekcji
 
   // 🔥 KOŁO
   const rank = getRank(xp)
@@ -67,23 +88,25 @@ export default function DashboardPage() {
   return (
     <div className="grid gap-6 md:grid-cols-2">
 
-      {/* 🔥 KARTA LEKCJI */}
-      <Card>
+      {/* 🔥 LEKCJA */}
+      <Card className="rounded-2xl shadow-md">
         <CardHeader>
-          <CardTitle>
+          <CardTitle className="text-xl">
             {lastDone > 0
               ? `✅ Ukończyłeś lekcję ${lastDone}`
-              : "🚀 Zacznij naukę "}
-            <span className="pl-2 text-xl">HTML</span>
+              : "🚀 Zacznij naukę"}
+            <span className="pl-2 text-lg text-muted-foreground">
+              HTML
+            </span>
           </CardTitle>
         </CardHeader>
 
-        <CardContent className="space-y-3">
+        <CardContent className="space-y-4">
 
           <Link href={`/dashboard/inf03/html/${nextLesson}`}>
-            <Button className="w-full">
+            <Button className="w-full text-lg py-5">
               {lastDone > 0
-                ? `Przejdź do lekcji ${nextLesson}`
+                ? `Kontynuuj → lekcja ${nextLesson}`
                 : "Rozpocznij lekcję 1"}
             </Button>
           </Link>
@@ -94,7 +117,7 @@ export default function DashboardPage() {
 
           <div className="w-full bg-muted h-2 rounded">
             <div
-              className="bg-primary h-2 rounded"
+              className="bg-primary h-2 rounded transition-all duration-500"
               style={{ width: `${progress}%` }}
             />
           </div>
@@ -102,71 +125,67 @@ export default function DashboardPage() {
         </CardContent>
       </Card>
 
-      {/* 🔥 XP + RANK */}
+      {/* 🔥 XP */}
       <Card className="p-6 rounded-2xl shadow-lg">
         <CardHeader>
-          <CardTitle className="text-center">
+          <CardTitle className="text-center text-xl">
             Twój poziom
           </CardTitle>
         </CardHeader>
 
         <CardContent className="flex justify-center">
 
-          <div className="relative w-48 h-48">
+          <div className="relative w-48 h-48 flex items-center justify-center">
 
-            {/* tło */}
-           <div className="relative w-48 h-48 flex items-center justify-center">
+            <svg
+              width="180"
+              height="180"
+              viewBox="0 0 180 180"
+              className="-rotate-90"
+            >
+              {/* tło */}
+              <circle
+                cx="90"
+                cy="90"
+                r="80"
+                stroke="#e5e7eb"
+                strokeWidth="10"
+                fill="none"
+              />
 
-  <svg
-    width="180"
-    height="180"
-    viewBox="0 0 180 180"
-    className="-rotate-90"
-  >
-    {/* tło */}
-    <circle
-      cx="90"
-      cy="90"
-      r="80"
-      stroke="#e5e7eb"
-      strokeWidth="10"
-      fill="none"
-    />
+              {/* progress */}
+              <circle
+                cx="90"
+                cy="90"
+                r="80"
+                stroke={rank.color}
+                strokeWidth="10"
+                fill="none"
+                strokeDasharray={2 * Math.PI * 80}
+                strokeDashoffset={
+                  2 * Math.PI * 80 * (1 - percentage / 100)
+                }
+                strokeLinecap="round"
+                className="transition-all duration-500"
+              />
+            </svg>
 
-    {/* progress */}
-    <circle
-      cx="90"
-      cy="90"
-      r="80"
-      stroke={rank.color}
-      strokeWidth="10"
-      fill="none"
-      strokeDasharray={2 * Math.PI * 80}
-      strokeDashoffset={
-        2 * Math.PI * 80 * (1 - percentage / 100)
-      }
-      strokeLinecap="round"
-      className="transition-all duration-500"
-    />
-  </svg>
+            {/* środek */}
+            <div className="absolute flex flex-col items-center justify-center">
 
-  {/* środek */}
-  <div className="absolute flex flex-col items-center justify-center">
+              <p className="text-3xl font-bold">
+                {xp}
+              </p>
 
-    <p className="text-3xl font-bold">
-      {xp}
-    </p>
+              <p
+                className="text-sm font-semibold"
+                style={{ color: rank.color }}
+              >
+                {rank.name}
+              </p>
 
-    <p
-      className="text-sm font-semibold"
-      style={{ color: rank.color }}
-    >
-      {rank.name}
-    </p>
+            </div>
 
-  </div>
-
-</div>
           </div>
 
         </CardContent>

@@ -32,105 +32,7 @@ export default function DashboardLayout({
   const [userData, setUserData] = useState<any>(null)
   const [loading, setLoading] = useState(true)
 
-  // useEffect(() => {
-  //   const checkUser = async () => {
-  //     const { data } = await supabase.auth.getSession()
-  //     const session = data.session
-  //     const user = session?.user
-
-  //     // ❌ brak sesji → login
-  //     if (!user) {
-  //       router.push("/login")
-  //       return
-  //     }
-
-  //     // ❌ brak potwierdzenia → verify
-  //     if (!user.email_confirmed_at) {
-  //       router.push("/verify-email")
-  //       return
-  //     }
-
-  //     // ✅ OK
-  //     setUserData({
-  //       email: user.email,
-  //       name:
-  //         user.user_metadata?.full_name ||
-  //         user.user_metadata?.name ||
-  //         user.email,
-  //       avatar:
-  //         user.user_metadata?.avatar_url ||
-  //         "/avatars/default.png",
-  //     })
-
-  //     setLoading(false)
-  //   }
-
-  //   checkUser()
-  // }, [router])
-
-//   useEffect(() => {
-//   let mounted = true
-
-//   const init = async () => {
-//     const { data } = await supabase.auth.getSession()
-//     const user = data.session?.user
-
-//     if (user && mounted) {
-//       handleUser(user)
-//     }
-//   }
-
-//   const handleUser = (user: any) => {
-// if (!user) {
-//   // ⏳ daj czas Supabase ustawić sesję po OAuth
-//   setTimeout(async () => {
-//     const { data } = await supabase.auth.getSession()
-//     const retryUser = data.session?.user
-
-//     if (!retryUser) {
-//       router.push("/login")
-//     } else {
-//       handleUser(retryUser)
-//     }
-//   }, 500)
-
-//   return
-// }
-
-//     if (!user.email_confirmed_at) {
-//       router.push("/verify-email")
-//       return
-//     }
-
-//     setUserData({
-//       email: user.email,
-//       name:
-//         user.user_metadata?.full_name ||
-//         user.user_metadata?.name ||
-//         user.email,
-//       avatar:
-//         user.user_metadata?.avatar_url ||
-//         "/avatars/default.png",
-//     })
-
-//     setLoading(false)
-//   }
-
-//   init()
-
-//   const {
-//     data: { subscription },
-//   } = supabase.auth.onAuthStateChange((event, session) => {
-//     if (event === "SIGNED_IN" && session?.user) {
-//       handleUser(session.user)
-//     }
-//   })
-
-//   return () => {
-//     mounted = false
-//     subscription.unsubscribe()
-//   }
-// }, [router])
+ 
 
 useEffect(() => {
   let mounted = true
@@ -217,7 +119,11 @@ if (!user.email_confirmed_at && user.app_metadata.provider === "email") {
     )
   }
 
-  const segments = pathname.split("/").filter(Boolean)
+ const rawSegments = pathname.split("/").filter(Boolean)
+
+const segments = rawSegments.filter(
+  (seg) => seg !== "inf03" && seg !== "inf04"
+)
 
   return (
     <SidebarProvider>
@@ -227,51 +133,57 @@ if (!user.email_confirmed_at && user.app_metadata.provider === "email") {
         <header className="flex h-16 items-center gap-2 px-4">
           <SidebarTrigger />
 
-          <Breadcrumb>
-            <BreadcrumbList>
-              {segments
-                .filter((seg) => seg !== "inf03" && seg !== "inf04")
-                .map((segment, index, arr) => {
-                const href =
-                "/" +
-                segments.slice(0, index + 1).join("/")
+    <Breadcrumb>
+  <BreadcrumbList>
+    {rawSegments.map((segment, index) => {
+      // 🔥 ukryj te segmenty
+      if (segment === "inf03" || segment === "inf04") return null
 
-                  const labels: Record<string, string> = {
-                    dashboard: "Dashboard",
-                    settings: "Ustawienia",
-                    html: "HTML",
-                    css: "CSS",
-                    js: "JavaScript",
-                    php: "PHP",
-                    sql: "SQL",
-                  }
+      const href =
+        "/" + rawSegments.slice(0, index + 1).join("/")
 
-                  const label =
-                    labels[segment] ||
-                    (Number(segment)
-                      ? `Lekcja ${segment}`
-                      : segment)
+      const labels: Record<string, string> = {
+        dashboard: "Dashboard",
+        settings: "Ustawienia",
+        html: "HTML",
+        css: "CSS",
+        js: "JavaScript",
+        php: "PHP",
+        sql: "SQL",
+      }
 
-                  return (
-                    <div key={index} className="flex items-center gap-2">
-                      {index !== 0 && <BreadcrumbSeparator />}
+      const label =
+        labels[segment] ||
+        (Number(segment) ? `Lekcja ${segment}` : segment)
 
-                      <BreadcrumbItem>
-                        {index === arr.length - 1 ? (
-                          <BreadcrumbPage className="font-semibold">
-                            {label}
-                          </BreadcrumbPage>
-                        ) : (
-                          <BreadcrumbLink asChild>
-                            <Link href={href}>{label}</Link>
-                          </BreadcrumbLink>
-                        )}
-                      </BreadcrumbItem>
-                    </div>
-                  )
-                })}
-            </BreadcrumbList>
-          </Breadcrumb>
+      // 🔥 sprawdź czy to ostatni widoczny element
+      const visibleSegments = rawSegments.filter(
+        (seg) => seg !== "inf03" && seg !== "inf04"
+      )
+
+      const visibleIndex = visibleSegments.indexOf(segment)
+      const isLast = visibleIndex === visibleSegments.length - 1
+
+      return (
+        <div key={index} className="flex items-center gap-2">
+          {visibleIndex !== 0 && <BreadcrumbSeparator />}
+
+          <BreadcrumbItem>
+            {isLast ? (
+              <BreadcrumbPage className="font-semibold">
+                {label}
+              </BreadcrumbPage>
+            ) : (
+              <BreadcrumbLink asChild>
+                <Link href={href}>{label}</Link>
+              </BreadcrumbLink>
+            )}
+          </BreadcrumbItem>
+        </div>
+      )
+    })}
+  </BreadcrumbList>
+</Breadcrumb>
         </header>
 
         <div className="flex flex-1 flex-col gap-4 p-4">
