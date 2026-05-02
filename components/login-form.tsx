@@ -13,6 +13,7 @@ import { useState } from "react"
 import { supabase } from "@/lib/supabase"
 import { toast } from "sonner"
 import { useRouter } from "next/navigation"
+import { Eye, EyeOff } from "lucide-react"
 
 export function LoginForm({
   className,
@@ -22,6 +23,8 @@ export function LoginForm({
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
   const [loading, setLoading] = useState(false)
+  const [showPassword, setShowPassword] = useState(false)
+
 
   const router = useRouter()
 
@@ -67,6 +70,18 @@ export function LoginForm({
     toast.error("Błąd logowania GitHub")
   }
 }
+const handleGoogleLogin = async () => {
+  const { error } = await supabase.auth.signInWithOAuth({
+    provider: "google",
+    options: {
+      redirectTo: `${window.location.origin}/dashboard`,
+    },
+  })
+
+  if (error) {
+    toast.error("Błąd logowania Google", { position: "top-center" })
+  }
+}
 
   return (
     <form
@@ -91,17 +106,28 @@ export function LoginForm({
           />
         </Field>
 
-        <Field>
-          <FieldLabel htmlFor="password">Hasło</FieldLabel>
-          <Input
-            id="password"
-            type="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            required
-          />
-        </Field>
+     <Field>
+  <FieldLabel>Hasło</FieldLabel>
 
+  <div className="relative">
+    <Input
+      type={showPassword ? "text" : "password"}
+      value={password}
+      onChange={(e) => setPassword(e.target.value)}
+      className="pr-10"
+    />
+
+    <button
+      type="button"
+      onClick={() => setShowPassword(!showPassword)}
+      className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground"
+    >
+      {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+    </button>
+  </div>
+
+  <FieldDescription>Min. 8 znaków</FieldDescription>
+</Field>
         <Field>
           <Button type="submit" disabled={loading}>
             {loading ? "Logowanie..." : "Zaloguj się"}
@@ -138,6 +164,26 @@ export function LoginForm({
             </svg>
             Sign up with GitHub
           </Button>
+          <Button
+  variant="outline"
+  type="button"
+  onClick={handleGoogleLogin}
+>
+  <svg className="w-4 h-4 mr-2" viewBox="0 0 24 24">
+    <path
+      fill="currentColor"
+      d="M21.35 11.1H12v2.8h5.35c-.23 1.3-1.4 3.8-5.35 3.8
+      -3.22 0-5.85-2.66-5.85-5.94s2.63-5.94 5.85-5.94
+      c1.83 0 3.05.78 3.75 1.45l2.55-2.48
+      C16.95 3.3 14.7 2.3 12 2.3
+      6.9 2.3 2.8 6.5 2.8 11.76
+      s4.1 9.46 9.2 9.46
+      c5.3 0 8.8-3.7 8.8-8.9
+      0-.6-.05-1.05-.15-1.22z"
+    />
+  </svg>
+  Kontynuuj z Google
+</Button>
 
           <FieldDescription className="px-6 text-center">
             Nie masz konta?{" "}
