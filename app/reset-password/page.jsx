@@ -21,39 +21,55 @@ export default function ResetPasswordPage() {
 
   // 🔥 USTAWIENIE SESJI Z LINKA (NAJWAŻNIEJSZE)
   useEffect(() => {
-    const handleAuth = async () => {
-      const hash = window.location.hash
+  const handleAuth = async () => {
+    const url = new URL(window.location.href)
 
-      if (!hash || !hash.includes("access_token")) {
-        toast.error("Nieprawidłowy lub wygasły link")
-        return
-      }
+    // 🔥 1. Obsługa błędu z Supabase (expired link itd.)
+    const error = url.searchParams.get("error")
 
-      const params = new URLSearchParams(hash.substring(1))
+    if (error) {
+      toast.error("Link wygasł lub jest nieprawidłowy")
 
-      const access_token = params.get("access_token")
-      const refresh_token = params.get("refresh_token")
+      setTimeout(() => {
+        router.push("/forgot-password")
+      }, 2000)
 
-      if (!access_token || !refresh_token) {
-        toast.error("Brak tokenów w linku")
-        return
-      }
-
-      const { error } = await supabase.auth.setSession({
-        access_token,
-        refresh_token,
-      })
-
-      if (error) {
-        toast.error("Nie udało się ustawić sesji")
-        return
-      }
-
-      setReady(true)
+      return
     }
 
-    handleAuth()
-  }, [])
+    const hash = window.location.hash
+
+    // 🔥 2. Brak tokena → NIE BLOKUJ UI
+    if (!hash || !hash.includes("access_token")) {
+      setReady(true) // 👈 KLUCZOWE
+      return
+    }
+
+    const params = new URLSearchParams(hash.substring(1))
+
+    const access_token = params.get("access_token")
+    const refresh_token = params.get("refresh_token")
+
+    if (!access_token || !refresh_token) {
+      toast.error("Nieprawidłowy link")
+      return
+    }
+
+    const { error: sessionError } = await supabase.auth.setSession({
+      access_token,
+      refresh_token,
+    })
+
+    if (sessionError) {
+      toast.error("Nie udało się ustawić sesji")
+      return
+    }
+
+    setReady(true)
+  }
+
+  handleAuth()
+}, [])
 
   // 🔥 ZMIANA HASŁA
   const handleReset = async () => {
