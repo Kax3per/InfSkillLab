@@ -89,7 +89,7 @@ export default function DashboardPage() {
     <div className="grid gap-6 md:grid-cols-2">
 
       {/* 🔥 LEKCJA */}
-      <Card className="rounded-2xl shadow-md">
+      <Card className="rounded-2xl shadow-md bg-transparent">
         <CardHeader>
           <CardTitle className="text-xl">
             {lastDone > 0
@@ -126,7 +126,7 @@ export default function DashboardPage() {
       </Card>
 
       {/* 🔥 XP */}
-      <Card className="p-6 rounded-2xl shadow-lg">
+      <Card className="p-6 rounded-2xl shadow-lg  bg-transparent">
         <CardHeader>
           <CardTitle className="text-center text-xl">
             Twój poziom

@@ -151,7 +151,23 @@ const { error } = await supabase.auth.resetPasswordForEmail(email, {
 
   return (
     <div className="w-full max-w-5xl px-12 py-10 ml-6">
+<div className="absolute inset-30 z-50 pointer-events-none">
 
+    {/* LIGHT */}
+    <div className="dark:hidden">
+      <div className="absolute top-100 left-100 w-72 h-72 bg-blue-400 opacity-30 rounded-full blur-[120px]" />
+      <div className="absolute bottom-20 right-10 w-80 h-80 bg-blue-500 opacity-30 rounded-full blur-[140px]" />
+      <div className="absolute top-1/2 left-1/3 w-60 h-60 bg-blue-300 opacity-30 rounded-full blur-[120px]" />
+    </div>
+
+    {/* DARK */}
+    <div className="hidden dark:block">
+      <div className="absolute top-20 left-10 w-72 h-72 bg-blue-500 opacity-20 rounded-full blur-[140px]" />
+      <div className="absolute bottom-20 right-10 w-80 h-80 bg-blue-600 opacity-20 rounded-full blur-[160px]" />
+      <div className="absolute top-1/2 left-1/3 w-60 h-60 bg-blue-400 opacity-20 rounded-full blur-[140px]" />
+    </div>
+
+  </div>
       {/* HEADER */}
       <div className="flex items-center gap-4 mb-12">
         <Settings className="w-7 h-7" />

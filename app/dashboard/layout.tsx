@@ -125,11 +125,31 @@ const segments = rawSegments.filter(
   (seg) => seg !== "inf03" && seg !== "inf04"
 )
 
-  return (
-    <SidebarProvider>
+return (
+  <div className="relative min-h-screen overflow-hidden bg-white dark:bg-black">
+
+    {/* 🔵 BACKGROUND BLOBS */}
+    <div className="fixed inset-0 z-0 pointer-events-none">
+
+      {/* LIGHT */}
+      <div className="absolute top-100 left-100 w-72 h-72 bg-blue-400 opacity-30 rounded-full blur-[120px]" />
+      <div className="absolute bottom-20 right-10 w-80 h-80 bg-blue-500 opacity-30 rounded-full blur-[140px]" />
+      <div className="absolute top-1/2 left-1/3 w-60 h-60 bg-blue-300 opacity-30 rounded-full blur-[120px]" />
+    </div>
+
+    {/* DARK */}
+    <div className="hidden dark:block">
+      <div className="absolute top-20 left-10 w-72 h-72 bg-blue-500 opacity-20 rounded-full blur-[140px]" />
+      <div className="absolute bottom-20 right-10 w-80 h-80 bg-blue-600 opacity-20 rounded-full blur-[160px]" />
+      <div className="absolute top-1/2 left-1/3 w-60 h-60 bg-blue-400 opacity-20 rounded-full blur-[140px]" />
+    </div>
+
+
+
+      <SidebarProvider>
       <AppSidebar user={userData} />
 
-      <SidebarInset>
+     <SidebarInset className="bg-transparent">
         <header className="flex h-16 items-center gap-2 px-4">
           <SidebarTrigger />
 
@@ -165,6 +185,7 @@ const segments = rawSegments.filter(
       const isLast = visibleIndex === visibleSegments.length - 1
 
       return (
+        
         <div key={index} className="flex items-center gap-2">
           {visibleIndex !== 0 && <BreadcrumbSeparator />}
 
@@ -190,6 +211,8 @@ const segments = rawSegments.filter(
           {children}
         </div>
       </SidebarInset>
-    </SidebarProvider>
+         </SidebarProvider>
+    </div>
+
   )
 }

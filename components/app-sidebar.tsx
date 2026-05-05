@@ -3,6 +3,7 @@
 import * as React from "react"
 import Image from "next/image"
 import Link from "next/link"
+import { useSidebar } from "@/components/ui/sidebar"
 
 import { Settings, BookOpenIcon } from "lucide-react"
 
@@ -50,16 +51,19 @@ const data = {
   ],
 }
 
+
 export function AppSidebar({
   user,
   ...props
 }: React.ComponentProps<typeof Sidebar> & { user: any }) {
   return (
-    <Sidebar collapsible="icon" {...props}>
+    <Sidebar collapsible="icon" 
+    className="bg-transparent"
+    {...props} >
 
       {/* 🔥 LOGO */}
       <SidebarHeader>
-        <div className="flex items-center h-16">
+        <div className="flex items-center h-16 bg-transparent">
 
           <Image
             src="/images/logoBlack.png"
@@ -86,7 +90,7 @@ export function AppSidebar({
       <SidebarContent>
 
         {/* SETTINGS BUTTON */}
-        <div className="px-2 py-2">
+        <div className="px-2 py-2 bg-transparent">
           <Link href="/dashboard/settings">
             <button
               className="
