@@ -260,14 +260,55 @@ max-h-[200px] overflow-hidden">
 </Button>
 
               {step === steps.length - 1 ? (
-                <Button
-                  onClick={async () => {
-                    setCompleted(true)
-                  }}
-                  className="bg-blue-600 hover:bg-blue-700 text-white"
-                >
-                  ✅ Zakończ
-                </Button>
+       <Button
+  onClick={async () => {
+    const { data } =
+      await supabase.auth.getUser()
+
+    const user = data.user
+
+    if (!user) return
+
+    // 🔥 SPRAWDŹ CZY JUŻ ISTNIEJE
+    const { data: existing } = await supabase
+      .from("progress")
+      .select("*")
+      .eq("user_id", user.id)
+      .eq("course", "html")
+      .eq("lesson", Number(id))
+
+    // 🔥 JEŚLI NIE MA → DODAJ
+    if (!existing || existing.length === 0) {
+      await supabase.from("progress").insert({
+        user_id: user.id,
+        course: "html",
+        lesson: Number(id),
+      })
+
+      // 🔥 DODAJ XP
+      const { data: profile } = await supabase
+        .from("profiles")
+        .select("xp")
+        .eq("id", user.id)
+        .single()
+
+      const currentXP = profile?.xp || 0
+
+      await supabase
+        .from("profiles")
+        .update({
+          xp: currentXP + 2,
+        })
+        .eq("id", user.id)
+    }
+
+    // 🔥 ODŚWIEŻ UI
+    setCompleted(true)
+  }}
+  className="bg-blue-600 hover:bg-blue-700 text-white"
+>
+  ✅ Zakończ
+</Button>
               ) : (
                 <Button
                   onClick={() => setStep(step + 1)}
