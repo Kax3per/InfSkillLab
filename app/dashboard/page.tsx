@@ -16,29 +16,33 @@ import {
 
 // 🔥 RANK SYSTEM
 function getRank(xp: number) {
-  if (xp < 50)
+  if (xp < 50) {
     return {
       name: "Bambik",
       color: "#6b7280",
     }
+  }
 
-  if (xp < 100)
+  if (xp < 100) {
     return {
       name: "Słabiak",
       color: "#3b82f6",
     }
+  }
 
-  if (xp < 150)
+  if (xp < 150) {
     return {
       name: "Pros",
       color: "#10b981",
     }
+  }
 
-  if (xp < 200)
+  if (xp < 200) {
     return {
       name: "Sigma",
       color: "#f59e0b",
     }
+  }
 
   return {
     name: "Pro",
@@ -46,31 +50,65 @@ function getRank(xp: number) {
   }
 }
 
+// 🔥 MOTIVATION NOTES
+const motivationNotes = [
+  "Każdy expert był kiedyś początkujący 🚀",
+  "Koduj codziennie, nawet 15 minut 🔥",
+  "Frontend to skill przyszłości 💻",
+  "Nie talent — regularność wygrywa 🧠",
+  "Mały progres codziennie = wielki wynik 📈",
+  "Każda lekcja przybliża Cię do pracy 👨‍💻",
+  "Nie poddawaj się po błędach ⚡",
+  "Programowanie to maraton, nie sprint 🏁",
+  "Tworzysz swoją przyszłość linijka po linijce ✨",
+  "Dyscyplina > motywacja 💪",
+]
+
 export default function DashboardPage() {
   const totalLessons = 8
   const pathname = usePathname()
 
   // 🔥 STATES
-  const [lastDone, setLastDone] = useState(0)
+  const [lastDone, setLastDone] =
+    useState(0)
 
   const [completedLessons, setCompletedLessons] =
     useState(0)
 
-  const [allCompletedLessons, setAllCompletedLessons] =
+  const [
+    allCompletedLessons,
+    setAllCompletedLessons,
+  ] = useState(0)
+
+  const [nextLesson, setNextLesson] =
+    useState(1)
+
+  const [progress, setProgress] =
     useState(0)
-
-  const [nextLesson, setNextLesson] = useState(1)
-
-  const [progress, setProgress] = useState(0)
 
   const [xp, setXp] = useState(0)
 
-  // 🔥 TIME
-  const [studySeconds, setStudySeconds] =
-    useState<number>(0)
+  const [streak, setStreak] =
+    useState(1)
 
-  // 🔥 REFS
-  const userIdRef = useRef<string | null>(null)
+  const [studySeconds, setStudySeconds] =
+    useState(0)
+
+  const userIdRef =
+    useRef<string | null>(null)
+
+
+// 🔥 DAILY NOTE
+const today = new Date()
+
+const dayNumber = Math.floor(
+  today.getTime() / (1000 * 60 * 60 * 24)
+)
+
+const randomNote =
+  motivationNotes[
+    dayNumber % motivationNotes.length
+  ]
 
   // 🔥 LOAD DATA
   useEffect(() => {
@@ -92,7 +130,6 @@ export default function DashboardPage() {
           .select("lesson")
           .eq("user_id", user.id)
           .eq("course", "html")
-          .eq("done", true)
 
       const uniqueLessons = [
         ...new Set(
@@ -102,7 +139,8 @@ export default function DashboardPage() {
         ),
       ]
 
-      const completed = uniqueLessons.length
+      const completed =
+        uniqueLessons.length
 
       const last =
         uniqueLessons.length > 0
@@ -114,9 +152,10 @@ export default function DashboardPage() {
           ? totalLessons
           : last + 1
 
-      const progressPercent = Math.round(
-        (completed / totalLessons) * 100
-      )
+      const progressPercent =
+        Math.round(
+          (completed / totalLessons) * 100
+        )
 
       // 🔥 ALL LESSONS
       const { data: allLessons } =
@@ -124,34 +163,95 @@ export default function DashboardPage() {
           .from("progress")
           .select("id")
           .eq("user_id", user.id)
-          .eq("done", true)
 
       // 🔥 PROFILE
-      const { data: profile } = await supabase
-        .from("profiles")
-        .select("xp")
-        .eq("id", user.id)
-        .single()
+      const { data: profile } =
+        await supabase
+          .from("profiles")
+          .select("xp")
+          .eq("id", user.id)
+          .single()
 
       // 🔥 USER STATS
-      let { data: stats } = await supabase
-        .from("user_stats")
-        .select("study_minutes")
-        .eq("user_id", user.id)
-        .single()
+      let { data: stats } =
+        await supabase
+          .from("user_stats")
+          .select(
+            "study_minutes, streak, last_active"
+          )
+          .eq("user_id", user.id)
+          .single()
 
-      // 🔥 CREATE IF NOT EXISTS
+      // 🔥 CREATE USER STATS
       if (!stats) {
         await supabase
           .from("user_stats")
           .insert({
             user_id: user.id,
             study_minutes: 0,
+            streak: 1,
+            last_active: new Date()
+              .toISOString()
+              .split("T")[0],
           })
 
         stats = {
           study_minutes: 0,
+          streak: 1,
+          last_active: new Date()
+            .toISOString()
+            .split("T")[0],
         }
+      }
+
+      // 🔥 STREAK
+      const today = new Date()
+
+      const todayString =
+        today.toISOString().split("T")[0]
+
+      const yesterday = new Date()
+
+      yesterday.setDate(
+        yesterday.getDate() - 1
+      )
+
+      const yesterdayString =
+        yesterday.toISOString().split("T")[0]
+
+      let currentStreak =
+        stats?.streak || 1
+
+      if (
+        stats?.last_active ===
+        yesterdayString
+      ) {
+        currentStreak += 1
+
+        await supabase
+          .from("user_stats")
+          .update({
+            streak: currentStreak,
+            last_active: todayString,
+          })
+          .eq("user_id", user.id)
+      } else if (
+        stats?.last_active === todayString
+      ) {
+        currentStreak =
+          stats?.streak || 1
+      } else if (
+        stats?.last_active !== todayString
+      ) {
+        currentStreak = 1
+
+        await supabase
+          .from("user_stats")
+          .update({
+            streak: 1,
+            last_active: todayString,
+          })
+          .eq("user_id", user.id)
       }
 
       if (!mounted) return
@@ -170,7 +270,8 @@ export default function DashboardPage() {
 
       setXp(profile?.xp || 0)
 
-      // 🔥 LOAD TIME FROM DATABASE
+      setStreak(currentStreak)
+
       setStudySeconds(
         Math.floor(
           (stats?.study_minutes || 0) * 60
@@ -194,61 +295,47 @@ export default function DashboardPage() {
     return () => clearInterval(interval)
   }, [])
 
-  // 🔥 SAVE TO DATABASE
-  const saveStudyTime = async () => {
-    const userId = userIdRef.current
-
-    if (!userId) return
-
-    const minutes =
-      studySeconds / 60
-
-    await supabase
-      .from("user_stats")
-      .update({
-        study_minutes: minutes,
-      })
-      .eq("user_id", userId)
-  }
-
-  // 🔥 AUTO SAVE
+  // 🔥 SAVE TIMER
   useEffect(() => {
-    const interval = setInterval(() => {
-      saveStudyTime()
-    }, 10000)
+    const interval = setInterval(async () => {
+      const userId = userIdRef.current
+
+      if (!userId) return
+
+      const minutes =
+        studySeconds / 60
+
+      await supabase
+        .from("user_stats")
+        .update({
+          study_minutes: minutes,
+        })
+        .eq("user_id", userId)
+    }, 60000)
 
     return () => clearInterval(interval)
   }, [studySeconds])
 
-  // 🔥 SAVE ON REFRESH / EXIT
-  useEffect(() => {
-    const handleLeave = () => {
-      saveStudyTime()
-    }
+  // 🔥 FORMAT TIME
+  const minutes = Math.floor(
+    studySeconds / 60
+  )
 
-    window.addEventListener(
-      "beforeunload",
-      handleLeave
-    )
-
-    return () => {
-      saveStudyTime()
-
-      window.removeEventListener(
-        "beforeunload",
-        handleLeave
-      )
-    }
-  }, [studySeconds])
+  const seconds =
+    studySeconds % 60
 
   // 🔥 RANK
   const rank = getRank(xp)
 
+  // 🔥 XP BAR
+  const levelProgress =
+    ((xp % 50) / 50) * 100
+
   return (
     <div className="space-y-5">
-      {/* TOP */}
+      {/* 🔥 TOP */}
       <div className="grid gap-5 xl:grid-cols-3">
-        {/* 🚀 NEXT LESSON */}
+        {/* 🚀 LESSON */}
         <div
           className="
             xl:col-span-2
@@ -264,9 +351,6 @@ export default function DashboardPage() {
             backdrop-blur-2xl
 
             p-7
-
-            shadow-[0_10px_40px_rgba(0,0,0,0.06)]
-            dark:shadow-[0_0_40px_rgba(59,130,246,0.08)]
           "
         >
           <div className="absolute -top-24 right-0 h-72 w-72 rounded-full bg-violet-500/10 blur-[120px]" />
@@ -377,17 +461,12 @@ export default function DashboardPage() {
             </div>
 
             {/* MINI STATS */}
-            <div className="mt-8 grid grid-cols-3 gap-4">
+            <div className="mt-8 grid grid-cols-2 gap-4">
               {[
-                {
-                  icon: Trophy,
-                  title: "XP",
-                  value: xp,
-                },
                 {
                   icon: Flame,
                   title: "Streak",
-                  value: "0 dni",
+                  value: `${streak} dni`,
                 },
                 {
                   icon: Sparkles,
@@ -406,6 +485,8 @@ export default function DashboardPage() {
 
                     bg-black/[0.02]
                     dark:bg-white/[0.03]
+
+                    backdrop-blur-xl
                   "
                 >
                   <div className="flex items-center gap-2 text-black/50 dark:text-muted-foreground">
@@ -442,65 +523,140 @@ export default function DashboardPage() {
             p-7
           "
         >
-          <div className="absolute bottom-0 right-0 h-64 w-64 rounded-full bg-blue-500/10 blur-[120px]" />
+          <div className="absolute bottom-0 right-0 h-64 w-64 rounded-full bg-violet-500/10 blur-[120px]" />
+<div className="absolute bottom-0 right-0 h-64 w-64 rounded-full bg-violet-500/10 blur-[120px]" />
 
-          <div className="relative z-10">
-            <div className="flex items-center justify-between">
-              <h3 className="text-2xl font-bold text-black dark:text-white">
-                Twój poziom
-              </h3>
+<div className="relative z-10">
+  {/* TOP */}
+  <div className="flex items-center justify-between">
+    <div>
+      <h3 className="text-2xl font-bold text-black dark:text-white">
+        Poziom
+      </h3>
 
-              <div
-                className="
-                  rounded-full
-                  px-3 py-1
-                  text-xs font-medium
+      <p className="mt-1 text-sm text-black/50 dark:text-muted-foreground">
+        Twój progres XP
+      </p>
+    </div>
 
-                  border border-violet-500/20
-                  bg-violet-500/10
-                "
-                style={{
-                  color: rank.color,
-                }}
-              >
-                {rank.name}
-              </div>
-            </div>
+    <div
+      className="
+        rounded-full
+        px-3 py-1
+        text-xs font-semibold
 
-            <div className="mt-12 flex justify-center">
-              <div
-                className="
-                  flex h-52 w-52 items-center justify-center
-                  rounded-full
+        border border-violet-500/20
+        bg-violet-500/10
+      "
+      style={{
+        color: rank.color,
+      }}
+    >
+      {rank.name}
+    </div>
+  </div>
 
-                  border-[12px]
+  {/* XP */}
+  <div className="mt-10">
+    <div className="flex items-end gap-3">
+      <h1 className="text-6xl font-bold tracking-tight text-black dark:text-white">
+        {xp}
+      </h1>
 
-                  border-black/5
-                  dark:border-white/10
+      <span className="pb-2 text-lg text-black/40 dark:text-white/40">
+        XP
+      </span>
+    </div>
+  </div>
 
-                  bg-white/60
-                  dark:bg-black/20
-                "
-              >
-                <div className="text-center">
-                  <h2 className="text-6xl font-bold text-black dark:text-white">
-                    {xp}
-                  </h2>
+  {/* BAR */}
+  <div className="mt-8">
+    <div className="mb-3 flex items-center justify-between">
+      <span className="text-sm text-black/50 dark:text-muted-foreground">
+        Następny poziom
+      </span>
 
-                  <p
-                    className="mt-3 text-lg font-semibold"
-                    style={{
-                      color: rank.color,
-                    }}
-                  >
-                    {rank.name}
-                  </p>
-                </div>
-              </div>
-            </div>
-          </div>
+      <span
+        className="text-sm font-semibold"
+        style={{
+          color: rank.color,
+        }}
+      >
+        {xp % 50}/50 XP
+      </span>
+    </div>
+
+    <div className="h-4 w-full overflow-hidden rounded-full bg-black/5 dark:bg-white/5">
+      <div
+        className="
+          h-full rounded-full
+          bg-gradient-to-r
+          from-violet-500
+          to-blue-500
+          transition-all duration-700
+        "
+        style={{
+          width: `${levelProgress}%`,
+        }}
+      />
+    </div>
+  </div>
+
+  {/* INFO CARDS */}
+  <div className="mt-8 grid gap-4">
+    {/* CURRENT RANK */}
+    <div
+      className="
+        rounded-2xl
+        border border-black/5
+        dark:border-white/5
+
+        bg-black/[0.02]
+        dark:bg-white/[0.03]
+
+        p-4
+      "
+    >
+      <p className="text-sm text-black/50 dark:text-muted-foreground">
+        Aktualna ranga
+      </p>
+
+      <h3
+        className="mt-2 text-2xl font-bold"
+        style={{
+          color: rank.color,
+        }}
+      >
+        {rank.name}
+      </h3>
+    </div>
+
+    {/* NEXT LEVEL */}
+    <div
+      className="
+        rounded-2xl
+        border border-black/5
+        dark:border-white/5
+
+        bg-black/[0.02]
+        dark:bg-white/[0.03]
+
+        p-4
+      "
+    >
+      <p className="text-sm text-black/50 dark:text-muted-foreground">
+        Brakuje do następnego poziomu
+      </p>
+
+      <h3 className="mt-2 text-2xl font-bold text-black dark:text-white">
+        {50 - (xp % 50)} XP
+      </h3>
+    </div>
+  </div>
+</div>
         </div>
       </div>
+
 
       {/* 📊 STATS */}
       <div
@@ -522,7 +678,6 @@ export default function DashboardPage() {
         <div className="absolute -bottom-10 -right-10 h-56 w-56 rounded-full bg-cyan-500/10 blur-[120px]" />
 
         <div className="relative z-10">
-          {/* TOP */}
           <div className="flex items-center justify-between">
             <div>
               <h3 className="text-2xl font-bold text-black dark:text-white">
@@ -548,9 +703,8 @@ export default function DashboardPage() {
             </div>
           </div>
 
-          {/* GRID */}
           <div className="mt-8 grid gap-4 md:grid-cols-2">
-            {/* lessons */}
+            {/* LESSONS */}
             <div
               className="
                 rounded-2xl
@@ -574,7 +728,7 @@ export default function DashboardPage() {
               </h2>
             </div>
 
-            {/* time */}
+            {/* TIME */}
             <div
               className="
                 rounded-2xl
@@ -594,19 +748,69 @@ export default function DashboardPage() {
               </p>
 
               <h2 className="mt-2 text-4xl font-bold text-black dark:text-white">
-                {Math.floor(studySeconds / 60)}:
-                {String(
-                  studySeconds % 60
-                ).padStart(2, "0")}
+                {minutes}:
+                {String(seconds).padStart(
+                  2,
+                  "0"
+                )}
               </h2>
-
-              <p className="mt-1 text-sm text-black/40 dark:text-white/40">
-                min
-              </p>
             </div>
           </div>
         </div>
       </div>
+            {/* 💡 MOTIVATION */}
+      <div
+        className="
+          relative overflow-hidden
+
+          rounded-[32px]
+
+          border border-violet-500/10
+
+          bg-gradient-to-br
+          from-violet-500/10
+          to-blue-500/10
+
+          backdrop-blur-2xl
+
+          p-7
+        "
+      >
+        <div className="absolute -right-20 -top-20 h-52 w-52 rounded-full bg-violet-500/20 blur-3xl" />
+
+        <div className="relative z-10">
+          <div
+            className="
+              inline-flex items-center gap-2
+
+              rounded-full
+
+              border border-violet-500/20
+              bg-violet-500/10
+
+              px-4 py-2
+
+              text-sm font-medium
+
+              text-violet-600
+              dark:text-violet-300
+            "
+          >
+            ✨ Codzienna motywacja
+          </div>
+
+          <h2 className="mt-6 text-3xl font-bold text-black dark:text-white">
+            {randomNote}
+          </h2>
+
+          <p className="mt-3 max-w-3xl text-black/60 dark:text-muted-foreground">
+            Regularna nauka i codzienne kodowanie
+            to najszybsza droga do zostania
+            frontend developerem 🚀
+          </p>
+        </div>
+      </div>
+
     </div>
   )
 }
