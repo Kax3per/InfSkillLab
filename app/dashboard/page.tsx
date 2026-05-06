@@ -65,9 +65,11 @@ export default function DashboardPage() {
 
   const [xp, setXp] = useState(0)
 
-  // 🔥 TIME
+  // 🔥 TIMER
   const [studySeconds, setStudySeconds] =
-    useState<number>(0)
+    useState(0)
+
+  const [loaded, setLoaded] = useState(false)
 
   // 🔥 REFS
   const userIdRef = useRef<string | null>(null)
@@ -170,12 +172,14 @@ export default function DashboardPage() {
 
       setXp(profile?.xp || 0)
 
-      // 🔥 LOAD TIME FROM DATABASE
-      setStudySeconds(
-        Math.floor(
-          (stats?.study_minutes || 0) * 60
-        )
+      // 🔥 LOAD TIMER FROM DB
+      const seconds = Math.floor(
+        (stats?.study_minutes || 0) * 60
       )
+
+      setStudySeconds(seconds)
+
+      setLoaded(true)
     }
 
     loadData()
@@ -187,59 +191,52 @@ export default function DashboardPage() {
 
   // 🔥 LIVE TIMER
   useEffect(() => {
+    if (!loaded) return
+
     const interval = setInterval(() => {
       setStudySeconds((prev) => prev + 1)
     }, 1000)
 
     return () => clearInterval(interval)
-  }, [])
+  }, [loaded])
 
-  // 🔥 SAVE TO DATABASE
-  const saveStudyTime = async () => {
-    const userId = userIdRef.current
-
-    if (!userId) return
-
-    const minutes =
-      studySeconds / 60
-
-    await supabase
-      .from("user_stats")
-      .update({
-        study_minutes: minutes,
-      })
-      .eq("user_id", userId)
-  }
-
-  // 🔥 AUTO SAVE
+  // 🔥 AUTO SAVE TO DATABASE
   useEffect(() => {
-    const interval = setInterval(() => {
-      saveStudyTime()
-    }, 10000)
+    if (!loaded) return
+
+    const interval = setInterval(async () => {
+      const userId = userIdRef.current
+
+      if (!userId) return
+
+      const minutes =
+        studySeconds / 60
+
+      const { error } = await supabase
+        .from("user_stats")
+        .upsert({
+          user_id: userId,
+          study_minutes: minutes,
+        })
+
+      if (error) {
+        console.error(
+          "SAVE TIMER ERROR:",
+          error
+        )
+      }
+    }, 5000)
 
     return () => clearInterval(interval)
-  }, [studySeconds])
+  }, [studySeconds, loaded])
 
-  // 🔥 SAVE ON REFRESH / EXIT
-  useEffect(() => {
-    const handleLeave = () => {
-      saveStudyTime()
-    }
+  // 🔥 FORMAT TIME
+  const minutes = Math.floor(
+    studySeconds / 60
+  )
 
-    window.addEventListener(
-      "beforeunload",
-      handleLeave
-    )
-
-    return () => {
-      saveStudyTime()
-
-      window.removeEventListener(
-        "beforeunload",
-        handleLeave
-      )
-    }
-  }, [studySeconds])
+  const seconds =
+    studySeconds % 60
 
   // 🔥 RANK
   const rank = getRank(xp)
@@ -522,7 +519,6 @@ export default function DashboardPage() {
         <div className="absolute -bottom-10 -right-10 h-56 w-56 rounded-full bg-cyan-500/10 blur-[120px]" />
 
         <div className="relative z-10">
-          {/* TOP */}
           <div className="flex items-center justify-between">
             <div>
               <h3 className="text-2xl font-bold text-black dark:text-white">
@@ -594,10 +590,11 @@ export default function DashboardPage() {
               </p>
 
               <h2 className="mt-2 text-4xl font-bold text-black dark:text-white">
-                {Math.floor(studySeconds / 60)}:
-                {String(
-                  studySeconds % 60
-                ).padStart(2, "0")}
+                {minutes}:
+                {String(seconds).padStart(
+                  2,
+                  "0"
+                )}
               </h2>
 
               <p className="mt-1 text-sm text-black/40 dark:text-white/40">
