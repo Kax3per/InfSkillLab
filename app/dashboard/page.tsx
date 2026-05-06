@@ -69,12 +69,9 @@ export default function DashboardPage() {
   const [studySeconds, setStudySeconds] =
     useState(0)
 
-  const [loaded, setLoaded] = useState(false)
-
-  // 🔥 REFS
   const userIdRef = useRef<string | null>(null)
 
-  // 🔥 LOAD DATA
+  // 🔥 LOAD ALL DATA
   useEffect(() => {
     let mounted = true
 
@@ -142,7 +139,7 @@ export default function DashboardPage() {
         .eq("user_id", user.id)
         .single()
 
-      // 🔥 CREATE IF NOT EXISTS
+      // 🔥 CREATE ROW IF NOT EXISTS
       if (!stats) {
         await supabase
           .from("user_stats")
@@ -155,6 +152,11 @@ export default function DashboardPage() {
           study_minutes: 0,
         }
       }
+
+      // 🔥 LOAD SAVED TIME
+      const seconds = Math.floor(
+        (stats?.study_minutes || 0) * 60
+      )
 
       if (!mounted) return
 
@@ -172,14 +174,7 @@ export default function DashboardPage() {
 
       setXp(profile?.xp || 0)
 
-      // 🔥 LOAD TIMER FROM DB
-      const seconds = Math.floor(
-        (stats?.study_minutes || 0) * 60
-      )
-
       setStudySeconds(seconds)
-
-      setLoaded(true)
     }
 
     loadData()
@@ -191,19 +186,15 @@ export default function DashboardPage() {
 
   // 🔥 LIVE TIMER
   useEffect(() => {
-    if (!loaded) return
-
     const interval = setInterval(() => {
       setStudySeconds((prev) => prev + 1)
     }, 1000)
 
     return () => clearInterval(interval)
-  }, [loaded])
+  }, [])
 
-  // 🔥 AUTO SAVE TO DATABASE
+  // 🔥 SAVE EVERY MINUTE
   useEffect(() => {
-    if (!loaded) return
-
     const interval = setInterval(async () => {
       const userId = userIdRef.current
 
@@ -214,21 +205,26 @@ export default function DashboardPage() {
 
       const { error } = await supabase
         .from("user_stats")
-        .upsert({
-          user_id: userId,
+        .update({
           study_minutes: minutes,
         })
+        .eq("user_id", userId)
 
       if (error) {
         console.error(
           "SAVE TIMER ERROR:",
           error
         )
+      } else {
+        console.log(
+          "saved minutes:",
+          minutes
+        )
       }
-    }, 5000)
+    }, 60000)
 
     return () => clearInterval(interval)
-  }, [studySeconds, loaded])
+  }, [studySeconds])
 
   // 🔥 FORMAT TIME
   const minutes = Math.floor(
