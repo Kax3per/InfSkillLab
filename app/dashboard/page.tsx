@@ -65,15 +65,11 @@ export default function DashboardPage() {
 
   const [xp, setXp] = useState(0)
 
-  // 🔥 STUDY TIME
-  const [savedMinutes, setSavedMinutes] =
+  // 🔥 TIME
+  const [studySeconds, setStudySeconds] =
     useState<number>(0)
 
-  const [sessionMinutes, setSessionMinutes] =
-    useState<number>(0)
-
-  const startTimeRef = useRef<number>(Date.now())
-
+  // 🔥 REFS
   const userIdRef = useRef<string | null>(null)
 
   // 🔥 LOAD DATA
@@ -174,8 +170,11 @@ export default function DashboardPage() {
 
       setXp(profile?.xp || 0)
 
-      setSavedMinutes(
-        stats?.study_minutes || 0
+      // 🔥 LOAD TIME FROM DATABASE
+      setStudySeconds(
+        Math.floor(
+          (stats?.study_minutes || 0) * 60
+        )
       )
     }
 
@@ -186,48 +185,61 @@ export default function DashboardPage() {
     }
   }, [pathname])
 
-  // 🔥 LIVE SESSION TIMER
+  // 🔥 LIVE TIMER
   useEffect(() => {
-    startTimeRef.current = Date.now()
-
     const interval = setInterval(() => {
-      const diff =
-        Date.now() - startTimeRef.current
-
-      const minutes = Number(
-        (
-          diff /
-          1000 /
-          60
-        ).toFixed(1)
-      )
-
-      setSessionMinutes(minutes)
+      setStudySeconds((prev) => prev + 1)
     }, 1000)
 
     return () => clearInterval(interval)
   }, [])
 
-  // 🔥 AUTO SAVE EVERY 15s
+  // 🔥 SAVE TO DATABASE
+  const saveStudyTime = async () => {
+    const userId = userIdRef.current
+
+    if (!userId) return
+
+    const minutes =
+      studySeconds / 60
+
+    await supabase
+      .from("user_stats")
+      .update({
+        study_minutes: minutes,
+      })
+      .eq("user_id", userId)
+  }
+
+  // 🔥 AUTO SAVE
   useEffect(() => {
-    const saveInterval = setInterval(async () => {
-      const userId = userIdRef.current
+    const interval = setInterval(() => {
+      saveStudyTime()
+    }, 10000)
 
-      if (!userId) return
+    return () => clearInterval(interval)
+  }, [studySeconds])
 
-      const total =
-        savedMinutes + sessionMinutes
+  // 🔥 SAVE ON REFRESH / EXIT
+  useEffect(() => {
+    const handleLeave = () => {
+      saveStudyTime()
+    }
 
-      await supabase
-        .from("user_stats")
-        .update({
-          study_minutes: total,
-        })
-        .eq("user_id", userId)
-    }, 15000)
+    window.addEventListener(
+      "beforeunload",
+      handleLeave
+    )
 
-    return () => clearInterval(saveInterval)
-  }, [savedMinutes, sessionMinutes])
+    return () => {
+      saveStudyTime()
+
+      window.removeEventListener(
+        "beforeunload",
+        handleLeave
+      )
+    }
+  }, [studySeconds])
 
   // 🔥 RANK
   const rank = getRank(xp)
@@ -236,7 +248,7 @@ export default function DashboardPage() {
     <div className="space-y-5">
       {/* TOP */}
       <div className="grid gap-5 xl:grid-cols-3">
-        {/* NEXT LESSON */}
+        {/* 🚀 NEXT LESSON */}
         <div
           className="
             xl:col-span-2
@@ -413,7 +425,7 @@ export default function DashboardPage() {
           </div>
         </div>
 
-        {/* LEVEL */}
+        {/* 🎯 LEVEL */}
         <div
           className="
             relative overflow-hidden
@@ -490,7 +502,7 @@ export default function DashboardPage() {
         </div>
       </div>
 
-      {/* STATS */}
+      {/* 📊 STATS */}
       <div
         className="
           relative overflow-hidden
@@ -510,6 +522,7 @@ export default function DashboardPage() {
         <div className="absolute -bottom-10 -right-10 h-56 w-56 rounded-full bg-cyan-500/10 blur-[120px]" />
 
         <div className="relative z-10">
+          {/* TOP */}
           <div className="flex items-center justify-between">
             <div>
               <h3 className="text-2xl font-bold text-black dark:text-white">
@@ -535,6 +548,7 @@ export default function DashboardPage() {
             </div>
           </div>
 
+          {/* GRID */}
           <div className="mt-8 grid gap-4 md:grid-cols-2">
             {/* lessons */}
             <div
@@ -580,14 +594,14 @@ export default function DashboardPage() {
               </p>
 
               <h2 className="mt-2 text-4xl font-bold text-black dark:text-white">
-                {(
-                  savedMinutes +
-                  sessionMinutes
-                ).toFixed(1)}
+                {Math.floor(studySeconds / 60)}:
+                {String(
+                  studySeconds % 60
+                ).padStart(2, "0")}
               </h2>
 
               <p className="mt-1 text-sm text-black/40 dark:text-white/40">
-                minut
+                min
               </p>
             </div>
           </div>

@@ -13,8 +13,8 @@ const poppins = Poppins({
 })
 
 export const metadata = {
-  title: "Twoja aplikacja",
-  description: "INF03 app",
+  title: "InfSkillsLab",
+  description: "INF learnig app",
 }
 
 export default function RootLayout({
@@ -23,8 +23,11 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
-    <html lang="pl" className={cn("font-sans", poppins.className)} suppressHydrationWarning>
-      
+    <html lang="pl" className={cn("font-sans", poppins.className)} suppressHydrationWarning >
+
+    
+   
+
       <body>
     <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
         <TooltipProvider>
