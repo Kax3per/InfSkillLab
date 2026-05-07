@@ -65,29 +65,50 @@ const { isMobile, setOpenMobile } = useSidebar()
     {...props} >
 
       {/* 🔥 LOGO */}
-      <SidebarHeader>
-        <div className="flex items-center h-16">
+<SidebarHeader>
+  <div
+    className="
+      flex items-center
+      mt-2 mb-5 h-16
 
-          <Image
-            src="/images/logoBlack.png"
-            alt="logo"
-            width={140}
-            height={40}
-            className="dark:hidden"
-            priority
-          />
+      px-2
 
-          <Image
-            src="/images/logoWhite.png"
-            alt="logo"
-            width={140}
-            height={40}
-            className="hidden dark:block"
-            priority
-          />
+      group-data-[collapsible=icon]:justify-center
+    "
+  >
 
-        </div>
-      </SidebarHeader>
+    {/* NORMAL LOGO */}
+    <Image
+      src="/logo.png"
+      alt="logo"
+      width={90}
+      height={40}
+      priority
+      className="
+        block
+        group-data-[collapsible=icon]:hidden
+      "
+    />
+
+    {/* ICON LOGO */}
+  <Image
+  src="/logo2.png"
+  alt="icon"
+  width={52}
+  height={52}
+  priority
+  className="
+    hidden
+
+    min-w-[35px]
+    min-h-[35px]
+
+    group-data-[collapsible=icon]:block
+  "
+/>
+
+  </div>
+</SidebarHeader>
 
       {/* 🔥 MENU */}
 <SidebarContent>

@@ -12,22 +12,14 @@ export default function LoginPage() {
             </div>
           
                     <Image
-                      src="/images/logoBlack.png"
+                      src="/logo.png"
                       alt="logo"
                       width={140}
                       height={40}
-                      className="dark:hidden"
                       priority
                     />
           
-                    <Image
-                      src="/images/logoWhite.png"
-                      alt="logo"
-                      width={140}
-                      height={40}
-                      className="hidden dark:block"
-                      priority
-                    />
+                   
         <div className="flex flex-1 items-center justify-center">
           <div className="w-full max-w-xs">
             <LoginForm />
