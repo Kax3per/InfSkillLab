@@ -66,9 +66,12 @@ const isChildActive = item.items?.some(
   // 🔹 najniższy poziom (link)
 return (
   <SidebarMenuSubItem key={item.title}>
-    <SidebarMenuSubButton   isActive={isActive}>
-      <Link
-        href={item.url || "#"}
+  <SidebarMenuSubButton
+    asChild
+    isActive={isActive}
+  >
+    <Link
+      href={item.url || "#"}
         onClick={() => {
           if (isMobile) {
             setOpenMobile(false)

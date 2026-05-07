@@ -528,104 +528,316 @@ const handleCodeValidation = () => {
 
   // SUMMARY
   if (completed && summary) {
-    return (
-      <div className="min-h-full flex items-center justify-center p-6">
+  return (
+    <div className="min-h-full flex items-center justify-center p-3 sm:p-5 lg:p-8">
 
-        <Card className="w-full max-w-5xl rounded-[32px] border border-black/10 dark:border-white/10 bg-white/70 dark:bg-black/50 backdrop-blur-2xl overflow-hidden">
+      <Card
+        className="
+          relative
+          w-full max-w-6xl
+          overflow-hidden
 
-          <div className="h-1.5 bg-gradient-to-r from-blue-500 via-blue-400 to-blue-600" />
+          rounded-[28px] sm:rounded-[32px]
 
-          <CardContent className="p-8 md:p-10 space-y-8">
+          border border-black/10
+          dark:border-white/10
 
-            <div className="flex flex-col lg:flex-row gap-8 lg:items-center">
+          bg-white/70
+          dark:bg-black/50
 
-              <div className="flex items-center gap-5">
+          backdrop-blur-2xl
+        "
+      >
 
-                <div className="w-20 h-20 rounded-3xl bg-blue-500/10 border border-blue-500/20 flex items-center justify-center">
-                  <Trophy className="w-10 h-10 text-blue-500" />
-                </div>
+        {/* TOP LINE */}
+        <div className="h-1.5 bg-gradient-to-r from-blue-500 via-blue-400 to-blue-600" />
 
-                <div>
-                  <p className="text-sm text-black/50 dark:text-white/40">
-                    Lekcja ukończona
-                  </p>
+        {/* GLOW */}
+        <div className="absolute -top-32 right-0 h-72 w-72 rounded-full bg-blue-500/10 blur-[120px]" />
 
-                  <h1 className="text-4xl font-bold text-blue-600 dark:text-blue-400">
-                    Podsumowanie
-                  </h1>
-                </div>
+        <CardContent
+          className="
+            relative z-10
 
+            p-4
+            sm:p-6
+            md:p-8
+            lg:p-10
+
+            space-y-6
+            md:space-y-8
+          "
+        >
+
+          {/* HEADER */}
+          <div
+            className="
+              flex flex-col
+              xl:flex-row
+              xl:items-center
+              gap-6
+            "
+          >
+
+            {/* LEFT */}
+            <div
+              className="
+                flex flex-col
+                sm:flex-row
+                sm:items-center
+                gap-5
+              "
+            >
+
+              <div
+                className="
+                  flex items-center justify-center
+
+                  w-16 h-16
+                  sm:w-20 sm:h-20
+
+                  rounded-3xl
+
+                  bg-blue-500/10
+                  border border-blue-500/20
+
+                  shrink-0
+                "
+              >
+                <Trophy className="w-8 h-8 sm:w-10 sm:h-10 text-blue-500" />
               </div>
 
-              <div className="flex gap-4 lg:ml-auto">
+              <div>
 
-                <div className="rounded-2xl border border-black/10 dark:border-white/10 bg-white/60 dark:bg-white/[0.03] p-4 min-w-[140px]">
-                  <p className="text-sm text-black/50 dark:text-white/40">
-                    Lekcja
-                  </p>
-
-                  <h3 className="text-3xl font-bold text-blue-600 dark:text-blue-400">
-                    #{lessonId}
-                  </h3>
-                </div>
-
-                <div className="rounded-2xl border border-black/10 dark:border-white/10 bg-white/60 dark:bg-white/[0.03] p-4 min-w-[140px]">
-                  <p className="text-sm text-black/50 dark:text-white/40">
-                    XP
-                  </p>
-
-                  <h3 className="text-3xl font-bold text-green-500">
-                    +2
-                  </h3>
-                </div>
-
-              </div>
-
-            </div>
-
-            <Card className="rounded-3xl border border-black/10 dark:border-white/10 bg-white/60 dark:bg-white/[0.03]">
-
-              <CardContent className="p-6 md:p-8">
-
-                <p className="text-lg leading-8 whitespace-pre-line text-black/70 dark:text-white/70">
-                  {summary.content}
+                <p className="text-sm text-black/50 dark:text-white/40">
+                  Lekcja ukończona
                 </p>
 
-              </CardContent>
+                <h1
+                  className="
+                    text-3xl
+                    sm:text-4xl
+                    lg:text-5xl
 
-            </Card>
+                    font-bold
 
-            <div className="flex flex-col md:flex-row gap-4">
+                    text-blue-600
+                    dark:text-blue-400
+                  "
+                >
+                  Podsumowanie
+                </h1>
 
-              <Button
-                onClick={() => {
-                  setCompleted(false)
-                  setStep(0)
-                }}
-                className="flex-1 h-14 rounded-2xl"
-              >
-                🔄 Powtórz lekcję
-              </Button>
-
-              <Link
-                href={`/dashboard/inf03/html/${lessonId + 1}`}
-                className="flex-1"
-              >
-                <Button className="w-full h-14 rounded-2xl bg-blue-600 hover:bg-blue-700">
-                  Następna lekcja
-                </Button>
-              </Link>
+              </div>
 
             </div>
 
-          </CardContent>
+            {/* RIGHT STATS */}
+            <div
+              className="
+                flex flex-col
+                sm:flex-row
 
-        </Card>
+                gap-3
+                sm:gap-4
 
-      </div>
-    )
-  }
+                xl:ml-auto
 
+                w-full
+                xl:w-auto
+              "
+            >
+
+              <div
+                className="
+                  flex-1
+
+                  rounded-2xl
+
+                  border border-black/10
+                  dark:border-white/10
+
+                  bg-white/60
+                  dark:bg-white/[0.03]
+
+                  p-4 sm:p-5
+
+                  backdrop-blur-xl
+                "
+              >
+
+                <p className="text-sm text-black/50 dark:text-white/40">
+                  Lekcja
+                </p>
+
+                <h3
+                  className="
+                    mt-1
+
+                    text-2xl
+                    sm:text-3xl
+
+                    font-bold
+
+                    text-blue-600
+                    dark:text-blue-400
+                  "
+                >
+                  #{lessonId}
+                </h3>
+
+              </div>
+
+              <div
+                className="
+                  flex-1
+
+                  rounded-2xl
+
+                  border border-black/10
+                  dark:border-white/10
+
+                  bg-white/60
+                  dark:bg-white/[0.03]
+
+                  p-4 sm:p-5
+
+                  backdrop-blur-xl
+                "
+              >
+
+                <p className="text-sm text-black/50 dark:text-white/40">
+                  XP
+                </p>
+
+                <h3
+                  className="
+                    mt-1
+
+                    text-2xl
+                    sm:text-3xl
+
+                    font-bold
+
+                    text-green-500
+                  "
+                >
+                  +2
+                </h3>
+
+              </div>
+
+            </div>
+
+          </div>
+
+          {/* SUMMARY */}
+          <Card
+            className="
+              rounded-3xl
+
+              border border-black/10
+              dark:border-white/10
+
+              bg-white/60
+              dark:bg-white/[0.03]
+
+              backdrop-blur-xl
+            "
+          >
+
+            <CardContent
+              className="
+                p-5
+                sm:p-6
+                md:p-8
+              "
+            >
+
+              <p
+                className="
+                  whitespace-pre-line
+
+                  text-base
+                  sm:text-lg
+
+                  leading-7
+                  sm:leading-8
+
+                  text-black/70
+                  dark:text-white/70
+                "
+              >
+                {summary.content}
+              </p>
+
+            </CardContent>
+
+          </Card>
+
+          {/* BUTTONS */}
+          <div
+            className="
+              grid
+              grid-cols-1
+              md:grid-cols-2
+              gap-4
+            "
+          >
+
+            <Button
+              onClick={() => {
+                setCompleted(false)
+                setStep(0)
+              }}
+              className="
+                h-13
+                sm:h-14
+
+                rounded-2xl
+
+                text-base
+                font-semibold
+              "
+            >
+              🔄 Powtórz lekcję
+            </Button>
+
+            <Link
+              href={`/dashboard/inf03/html/${lessonId + 1}`}
+              className="w-full"
+            >
+
+              <Button
+                className="
+                  w-full
+
+                  h-13
+                  sm:h-14
+
+                  rounded-2xl
+
+                  text-base
+                  font-semibold
+
+                  bg-blue-600
+                  hover:bg-blue-700
+                "
+              >
+                Następna lekcja
+              </Button>
+
+            </Link>
+
+          </div>
+
+        </CardContent>
+
+      </Card>
+
+    </div>
+  )
+}
   return (
     <div className="h-[calc(100vh-64px)] overflow-hidden text-black dark:text-white">
 
