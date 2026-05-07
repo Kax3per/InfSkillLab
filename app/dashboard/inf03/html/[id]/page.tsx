@@ -1201,76 +1201,126 @@ const handleCodeValidation = () => {
           </div>
 
           {/* BOTTOM NAV */}
-          <div
-            className="
-              shrink-0
-              border-t
-              border-black/10
-              dark:border-white/10
-              bg-white/80
-              dark:bg-black/80
-              backdrop-blur-xl
-              p-4
-              flex
-              items-center
-              justify-between
-            "
-          >
+        <div
+  className="
+    shrink-0
 
-            <Button
-              disabled={step === 0}
-              onClick={() =>
-                setStep(step - 1)
-              }
-              className="
-                h-14
-                px-8
-                rounded-2xl
-                bg-blue-600
-                hover:bg-blue-700
-                text-white
-              "
-            >
-              <ArrowLeft className="w-4 h-4 mr-2" />
-              Wstecz
-            </Button>
+    border-t
+    border-black/10
+    dark:border-white/10
 
-            {step === steps.length - 1 ? (
-              <Button
-                onClick={handleFinishLesson}
-                className="
-                  h-14
-                  px-8
-                  rounded-2xl
-                  bg-green-600
-                  hover:bg-green-700
-                  text-white
-                "
-              >
-                <CheckCircle2 className="w-4 h-4 mr-2" />
-                Zakończ
-              </Button>
-            ) : (
-              <Button
-                onClick={() =>
-                  setStep(step + 1)
-                }
-                className="
-                  h-14
-                  px-8
-                  rounded-2xl
-                  bg-blue-600
-                  hover:bg-blue-700
-                  text-white
-                "
-              >
-                Dalej
-                <ArrowRight className="w-4 h-4 ml-2" />
-              </Button>
-            )}
+    bg-white/80
+    dark:bg-black/80
 
-          </div>
+    backdrop-blur-xl
 
+    p-3
+    sm:p-4
+
+    flex flex-col
+    sm:flex-row
+
+    gap-3
+    sm:gap-4
+
+    sm:items-center
+    sm:justify-between
+  "
+>
+
+  <Button
+    disabled={step === 0}
+    onClick={() =>
+      setStep(step - 1)
+    }
+    className="
+      w-full
+      sm:w-auto
+
+      h-11
+      sm:h-14
+
+      px-5
+      sm:px-8
+
+      rounded-2xl
+
+      text-sm
+      sm:text-base
+
+      bg-blue-600
+      hover:bg-blue-700
+
+      text-white
+    "
+  >
+    <ArrowLeft className="w-4 h-4 mr-2" />
+    Wstecz
+  </Button>
+
+  {step === steps.length - 1 ? (
+
+    <Button
+      onClick={handleFinishLesson}
+      className="
+        w-full
+        sm:w-auto
+
+        h-11
+        sm:h-14
+
+        px-5
+        sm:px-8
+
+        rounded-2xl
+
+        text-sm
+        sm:text-base
+
+        bg-green-600
+        hover:bg-green-700
+
+        text-white
+      "
+    >
+      <CheckCircle2 className="w-4 h-4 mr-2" />
+      Zakończ
+    </Button>
+
+  ) : (
+
+    <Button
+      onClick={() =>
+        setStep(step + 1)
+      }
+      className="
+        w-full
+        sm:w-auto
+
+        h-11
+        sm:h-14
+
+        px-5
+        sm:px-8
+
+        rounded-2xl
+
+        text-sm
+        sm:text-base
+
+        bg-blue-600
+        hover:bg-blue-700
+
+        text-white
+      "
+    >
+      Dalej
+      <ArrowRight className="w-4 h-4 ml-2" />
+    </Button>
+
+  )}
+
+</div>
         </Card>
 
       </div>
