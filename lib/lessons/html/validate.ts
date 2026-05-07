@@ -15,119 +15,182 @@ export type QuizValidationResult = {
 //
 
 export function validateHtml(
-  code: string
+  code: string,
+  requiredTags: string[] = []
 ): ValidationResult {
+
   const errors: string[] = []
 
-  // -------------------
-  // H1
-  // -------------------
+  requiredTags.forEach((tag) => {
 
-  if (!code.includes("<h1>")) {
-    errors.push("Brakuje tagu <h1>.")
-  }
+    // -------------------
+    // DOCTYPE
+    // -------------------
 
-  if (!code.includes("</h1>")) {
-    errors.push(
-      "Tag <h1> nie został zamknięty."
-    )
-  }
+    if (tag === "!DOCTYPE") {
 
-  // -------------------
-  // P
-  // -------------------
+      if (
+        !code.includes("<!DOCTYPE html>")
+      ) {
+        errors.push(
+          "Brakuje <!DOCTYPE html>."
+        )
+      }
 
-  if (!code.includes("<p>")) {
-    errors.push("Brakuje tagu <p>.")
-  }
+      return
+    }
 
-  if (!code.includes("</p>")) {
-    errors.push(
-      "Tag <p> nie został zamknięty."
-    )
-  }
+    // -------------------
+    // IMG
+    // -------------------
 
-  // -------------------
-  // EMPTY H1
-  // -------------------
+    if (tag === "img") {
 
-  const h1Start =
-    code.indexOf("<h1>")
+      if (!code.includes("<img")) {
+        errors.push(
+          "Brakuje tagu <img>."
+        )
+      }
 
-  const h1End =
-    code.indexOf("</h1>")
+      return
+    }
 
-  if (
-    h1Start !== -1 &&
-    h1End !== -1
-  ) {
-    const h1Content = code
-      .slice(h1Start + 4, h1End)
-      .trim()
+    // -------------------
+    // INPUT
+    // -------------------
 
-    if (h1Content === "") {
+    if (tag === "input") {
+
+      if (!code.includes("<input")) {
+        errors.push(
+          "Brakuje tagu <input>."
+        )
+      }
+
+      return
+    }
+
+    // -------------------
+    // NORMAL TAGS
+    // -------------------
+
+    const openingTag = `<${tag}`
+    const closingTag = `</${tag}>`
+
+    // opening
+
+    if (!code.includes(openingTag)) {
       errors.push(
-        "Nagłówek <h1> nie może być pusty."
+        `Brakuje tagu <${tag}>.`
       )
     }
-  }
 
-  // -------------------
-  // EMPTY P
-  // -------------------
+    // self closing
 
-  const pStart =
-    code.indexOf("<p>")
+    const selfClosingTags = [
+      "br",
+      "hr",
+      "meta",
+      "link",
+      "source",
+    ]
 
-  const pEnd =
-    code.indexOf("</p>")
+    // closing
 
-  if (
-    pStart !== -1 &&
-    pEnd !== -1
-  ) {
-    const pContent = code
-      .slice(pStart + 3, pEnd)
-      .trim()
-
-    if (pContent === "") {
+    if (
+      !selfClosingTags.includes(tag)
+      && !code.includes(closingTag)
+    ) {
       errors.push(
-        "Paragraf <p> nie może być pusty."
+        `Tag <${tag}> nie został zamknięty.`
       )
     }
-  }
 
-  // -------------------
-  // TAG COUNT
-  // -------------------
+    // -------------------
+    // EMPTY TAG CHECK
+    // -------------------
 
-  const openingH1 =
-    (code.match(/<h1>/g) || [])
-      .length
+    const emptyCheckTags = [
+      "h1",
+      "h2",
+      "p",
+      "strong",
+      "title",
+      "button",
+      "li",
+      "th",
+      "td",
+      "label",
+      "section",
+      "header",
+      "footer",
+      "nav",
+      "main",
+    ]
 
-  const closingH1 =
-    (code.match(/<\/h1>/g) || [])
-      .length
+    if (
+      emptyCheckTags.includes(tag)
+      && code.includes(openingTag)
+      && code.includes(closingTag)
+    ) {
 
-  if (openingH1 !== closingH1) {
-    errors.push(
-      "Liczba tagów <h1> jest niepoprawna."
-    )
-  }
+      const start =
+        code.indexOf(">",
+        code.indexOf(openingTag))
 
-  const openingP =
-    (code.match(/<p>/g) || [])
-      .length
+      const end =
+        code.indexOf(closingTag)
 
-  const closingP =
-    (code.match(/<\/p>/g) || [])
-      .length
+      if (
+        start !== -1 &&
+        end !== -1
+      ) {
 
-  if (openingP !== closingP) {
-    errors.push(
-      "Liczba tagów <p> jest niepoprawna."
-    )
-  }
+        const content = code
+          .slice(start + 1, end)
+          .trim()
+
+        if (content === "") {
+          errors.push(
+            `Tag <${tag}> nie może być pusty.`
+          )
+        }
+      }
+    }
+
+    // -------------------
+    // TAG COUNT
+    // -------------------
+
+    if (
+      !selfClosingTags.includes(tag)
+      && tag !== "img"
+      && tag !== "!DOCTYPE"
+      && tag !== "input"
+    ) {
+
+      const openingCount =
+        (
+          code.match(
+            new RegExp(`<${tag}`, "g")
+          ) || []
+        ).length
+
+      const closingCount =
+        (
+          code.match(
+            new RegExp(`</${tag}>`, "g")
+          ) || []
+        ).length
+
+      if (openingCount !== closingCount) {
+        errors.push(
+          `Liczba tagów <${tag}> jest niepoprawna.`
+        )
+      }
+    }
+
+  })
 
   return {
     success: errors.length === 0,
@@ -143,6 +206,7 @@ export function validateQuiz(
   selected: number | null,
   correct: number
 ): QuizValidationResult {
+
   if (selected === null) {
     return {
       success: false,

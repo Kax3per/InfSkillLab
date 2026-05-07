@@ -60,6 +60,11 @@ const lessons = [
     title: "Formularze",
     icon: "📝",
   },
+    {
+    id: 10,
+    title: "Multimedia",
+    icon: "🎥",
+  },
 ]
 
 export default function HtmlPage() {

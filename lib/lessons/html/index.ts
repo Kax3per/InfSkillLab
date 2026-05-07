@@ -7,6 +7,8 @@ import { lesson6, lesson6Summary } from "./6"
 import { lesson7, lesson7Summary } from "./7"
 import { lesson8, lesson8Summary } from "./8"
 import { lesson9, lesson9Summary } from "./9"
+import { lesson10, lesson10Summary } from "./10"
+
 
 
 
@@ -20,6 +22,8 @@ export const htmlLessons: Record<number, any> = {
   7: lesson7,
   8: lesson8,
   9: lesson9,
+  10: lesson10,
+
 
 
 
@@ -37,6 +41,8 @@ export const htmlSummaries: Record<number, any> = {
   7: lesson7Summary,
   8: lesson8Summary,
   9: lesson9Summary,
+  10: lesson10Summary,
+
 
 
 

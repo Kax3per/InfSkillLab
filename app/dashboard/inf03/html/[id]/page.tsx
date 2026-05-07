@@ -154,18 +154,296 @@ export default function LessonPage({
   }, [code, lessonId])
 
   // VALIDATE CODE
-  const handleCodeValidation = () => {
-    const validation =
-      validateHtml(code)
+const handleCodeValidation = () => {
 
-    setValidationErrors(
-      validation.errors
-    )
+  let validation
 
-    setResult(validation.success)
+  // LEKCJA 1
+  if (lessonId === 1) {
 
-    setOpen(true)
+    validation = validateHtml(code, [
+      "h1",
+      "p",
+    ])
   }
+
+  // LEKCJA 2
+  else if (lessonId === 2) {
+
+    validation = validateHtml(code, [
+      "!DOCTYPE",
+      "html",
+      "head",
+      "title",
+      "body",
+      "h1",
+      "p",
+    ])
+  }
+
+  // LEKCJA 3
+  else if (lessonId === 3) {
+
+    validation = validateHtml(code, [
+      "h1",
+      "h2",
+      "p",
+      "strong",
+    ])
+  }
+
+  // LEKCJA 4
+  else if (lessonId === 4) {
+
+    validation = validateHtml(code, [
+      "h1",
+      "p",
+      "a",
+    ])
+
+    const errors = validation.errors
+
+    if (!code.includes('target="_blank"')) {
+      errors.push(
+        "Brakuje linku otwierającego się w nowej karcie."
+      )
+    }
+
+    validation = {
+      success: errors.length === 0,
+      errors,
+    }
+  }
+
+  // LEKCJA 5
+  else if (lessonId === 5) {
+
+    validation = validateHtml(code, [
+      "h1",
+      "p",
+      "img",
+    ])
+
+    const errors = validation.errors
+
+    if (!code.includes("alt=")) {
+      errors.push(
+        "Brakuje atrybutu alt."
+      )
+    }
+
+    if (
+      !code.includes("width=") &&
+      !code.includes("style=")
+    ) {
+      errors.push(
+        "Brakuje ustawionej szerokości obrazka."
+      )
+    }
+
+    validation = {
+      success: errors.length === 0,
+      errors,
+    }
+  }
+
+  // LEKCJA 6
+  else if (lessonId === 6) {
+
+    validation = validateHtml(code, [
+      "h1",
+      "ul",
+      "ol",
+      "li",
+    ])
+
+    const errors = validation.errors
+
+    const liCount =
+      (code.match(/<li>/g) || []).length
+
+    if (liCount < 6) {
+      errors.push(
+        "Musisz dodać minimum 6 elementów <li>."
+      )
+    }
+
+    validation = {
+      success: errors.length === 0,
+      errors,
+    }
+  }
+
+  // LEKCJA 7
+  else if (lessonId === 7) {
+
+    validation = validateHtml(code, [
+      "header",
+      "nav",
+      "main",
+      "section",
+      "footer",
+      "h1",
+      "p",
+    ])
+  }
+
+  // LEKCJA 8
+  else if (lessonId === 8) {
+
+    validation = validateHtml(code, [
+      "table",
+      "tr",
+      "th",
+      "td",
+    ])
+
+    const errors = validation.errors
+
+    const trCount =
+      (code.match(/<tr>/g) || []).length
+
+    const thCount =
+      (code.match(/<th>/g) || []).length
+
+    const tdCount =
+      (code.match(/<td>/g) || []).length
+
+    if (trCount < 3) {
+      errors.push(
+        "Tabela musi mieć minimum 3 wiersze."
+      )
+    }
+
+    if (thCount < 2) {
+      errors.push(
+        "Tabela musi mieć minimum 2 nagłówki <th>."
+      )
+    }
+
+    if (tdCount < 4) {
+      errors.push(
+        "Tabela musi mieć minimum 4 komórki <td>."
+      )
+    }
+
+    validation = {
+      success: errors.length === 0,
+      errors,
+    }
+  }
+
+  // LEKCJA 9
+  else if (lessonId === 9) {
+
+    validation = validateHtml(code, [
+      "form",
+      "input",
+      "button",
+    ])
+
+    const errors = validation.errors
+
+    if (
+      !code.includes('type="text"')
+    ) {
+      errors.push(
+        "Brakuje pola tekstowego."
+      )
+    }
+
+    if (
+      !code.includes('type="email"')
+    ) {
+      errors.push(
+        "Brakuje pola email."
+      )
+    }
+
+    if (
+      !code.includes('type="password"')
+    ) {
+      errors.push(
+        "Brakuje pola hasła."
+      )
+    }
+
+    if (
+      !code.includes('type="checkbox"')
+    ) {
+      errors.push(
+        "Brakuje checkboxa."
+      )
+    }
+
+    validation = {
+      success: errors.length === 0,
+      errors,
+    }
+  }
+
+  // LEKCJA 10
+  else if (lessonId === 10) {
+
+    validation = validateHtml(code, [
+      "h1",
+      "video",
+      "iframe",
+    ])
+
+    const errors = validation.errors
+
+    if (!code.includes("controls")) {
+      errors.push(
+        "Brakuje controls w video."
+      )
+    }
+
+    if (!code.includes("autoplay")) {
+      errors.push(
+        "Brakuje autoplay."
+      )
+    }
+
+    if (!code.includes("muted")) {
+      errors.push(
+        "Brakuje muted."
+      )
+    }
+
+    if (
+      !code.includes("youtube.com") &&
+      !code.includes("youtu.be")
+    ) {
+      errors.push(
+        "Brakuje filmu YouTube w iframe."
+      )
+    }
+
+    validation = {
+      success: errors.length === 0,
+      errors,
+    }
+  }
+
+  // DOMYŚLNIE
+  else {
+
+    validation = {
+      success: true,
+      errors: [],
+    }
+  }
+
+  setValidationErrors(
+    validation.errors
+  )
+
+  setResult(validation.success)
+
+  setOpen(true)
+}
+
 
   // VALIDATE QUIZ
   const handleQuizValidation = () => {
