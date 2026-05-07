@@ -1,9 +1,16 @@
 "use client"
 
 import { useEffect, useState } from "react"
+
 import Link from "next/link"
-import { useRouter, usePathname } from "next/navigation"
+
+import {
+  useRouter,
+  usePathname,
+} from "next/navigation"
+
 import { supabase } from "@/lib/supabase"
+
 import { AppSidebar } from "@/components/app-sidebar"
 
 import {
@@ -27,192 +34,365 @@ export default function DashboardLayout({
   children: React.ReactNode
 }) {
   const router = useRouter()
+
   const pathname = usePathname()
 
-  const [userData, setUserData] = useState<any>(null)
-  const [loading, setLoading] = useState(true)
+  const [userData, setUserData] =
+    useState<any>(null)
 
- 
+  const [loading, setLoading] =
+    useState(true)
 
-useEffect(() => {
-  let mounted = true
+  // 🔥 LESSON PAGE DETECTION
+  const isLessonPage =
+    pathname.includes("/html/") ||
+    pathname.includes("/css/") ||
+    pathname.includes("/js/") ||
+    pathname.includes("/php/") ||
+    pathname.includes("/sql/")
 
-  const bootstrap = async () => {
-    // 🔥 1. obsłuż OAuth z URL
-    const url = new URL(window.location.href)
+  useEffect(() => {
+    const bootstrap = async () => {
+      try {
+        // PKCE
+        const url = new URL(
+          window.location.href
+        )
 
-    // przypadek PKCE (code w query)
-    const code = url.searchParams.get("code")
+        const code =
+          url.searchParams.get("code")
 
-    if (code) {
-      await supabase.auth.exchangeCodeForSession(code)
-      // wyczyść URL (żeby nie powtarzać)
-      window.history.replaceState({}, document.title, "/dashboard")
-    }
+        if (code) {
+          await supabase.auth.exchangeCodeForSession(
+            code
+          )
 
-    // przypadek implicit (tokeny w hash)
-    const hash = window.location.hash
-    if (hash && hash.includes("access_token")) {
-      const params = new URLSearchParams(hash.substring(1))
-      const access_token = params.get("access_token")
-      const refresh_token = params.get("refresh_token")
+          window.history.replaceState(
+            {},
+            document.title,
+            "/dashboard"
+          )
+        }
 
-      if (access_token && refresh_token) {
-        await supabase.auth.setSession({ access_token, refresh_token })
-        window.history.replaceState({}, document.title, "/dashboard")
+        // HASH TOKENS
+        const hash =
+          window.location.hash
+
+        if (
+          hash &&
+          hash.includes("access_token")
+        ) {
+          const params =
+            new URLSearchParams(
+              hash.substring(1)
+            )
+
+          const access_token =
+            params.get("access_token")
+
+          const refresh_token =
+            params.get("refresh_token")
+
+          if (
+            access_token &&
+            refresh_token
+          ) {
+            await supabase.auth.setSession({
+              access_token,
+              refresh_token,
+            })
+
+            window.history.replaceState(
+              {},
+              document.title,
+              "/dashboard"
+            )
+          }
+        }
+
+        // SESSION
+        const { data } =
+          await supabase.auth.getSession()
+
+        handleUser(data.session?.user)
+      } catch (error) {
+        console.error(error)
       }
     }
 
-    // 🔥 2. teraz dopiero sprawdź sesję
-    const { data } = await supabase.auth.getSession()
-    handleUser(data.session?.user)
-  }
+    const handleUser = (user: any) => {
+      if (!user) {
+        router.push("/login")
+        return
+      }
 
-  const handleUser = (user: any) => {
-    if (!user) {
-      router.push("/login")
-      return
+      if (
+        !user.email_confirmed_at &&
+        user.app_metadata.provider ===
+          "email"
+      ) {
+        router.push("/verify-email")
+        return
+      }
+
+      setUserData({
+        email: user.email,
+
+        name:
+          user.user_metadata
+            ?.full_name ||
+          user.user_metadata?.name ||
+          user.email,
+
+        avatar:
+          user.user_metadata
+            ?.avatar_url ||
+          "/avatars/default.png",
+      })
+
+      setLoading(false)
     }
 
-    // przy Google to i tak będzie true, ale zostaw jeśli chcesz
-if (!user.email_confirmed_at && user.app_metadata.provider === "email") {
-  router.push("/verify-email")
-  return
-}
+    bootstrap()
 
-    setUserData({
-      email: user.email,
-      name:
-        user.user_metadata?.full_name ||
-        user.user_metadata?.name ||
-        user.email,
-      avatar:
-        user.user_metadata?.avatar_url ||
-        "/avatars/default.png",
-    })
+    const {
+      data: { subscription },
+    } =
+      supabase.auth.onAuthStateChange(
+        (event, session) => {
+          if (
+            event === "SIGNED_IN" &&
+            session?.user
+          ) {
+            handleUser(session.user)
+          }
+        }
+      )
 
-    setLoading(false)
-  }
-
-  bootstrap()
-
-  // 🔥 3. listener (gdy sesja pojawi się chwilę później)
-  const {
-    data: { subscription },
-  } = supabase.auth.onAuthStateChange((event, session) => {
-    if (event === "SIGNED_IN" && session?.user) {
-      handleUser(session.user)
+    return () => {
+      subscription.unsubscribe()
     }
-  })
-
-  return () => {
-    mounted = false
-    subscription.unsubscribe()
-  }
-}, [router])
+  }, [router])
 
   if (loading || !userData) {
     return (
-      <div className="flex h-screen items-center justify-center">
-        <p className="text-muted-foreground">Ładowanie...</p>
+      <div className="flex h-screen items-center justify-center bg-white dark:bg-black">
+        <p className="text-muted-foreground">
+          Ładowanie...
+        </p>
       </div>
     )
   }
 
- const rawSegments = pathname.split("/").filter(Boolean)
+  const rawSegments = pathname
+    .split("/")
+    .filter(Boolean)
 
-const segments = rawSegments.filter(
-  (seg) => seg !== "inf03" && seg !== "inf04"
-)
+  return (
+    <div className="relative min-h-screen bg-white dark:bg-black lesson-scroll">
 
-return (
-  <div className="relative min-h-screen overflow-hidden bg-white dark:bg-black">
+      {/* BACKGROUND */}
+      <div className="fixed inset-0 z-0 pointer-events-none">
 
-    {/* 🔵 BACKGROUND BLOBS */}
-    <div className="fixed inset-0 z-0 pointer-events-none">
+        {/* LIGHT */}
+        <div className="dark:hidden">
 
-      {/* LIGHT */}
-      <div className="absolute top-100 left-100 w-72 h-72 bg-blue-400 opacity-30 rounded-full blur-[120px]" />
-      <div className="absolute bottom-20 right-10 w-80 h-80 bg-blue-500 opacity-30 rounded-full blur-[140px]" />
-      <div className="absolute top-1/2 left-1/3 w-60 h-60 bg-blue-300 opacity-30 rounded-full blur-[120px]" />
-    </div>
+          <div className="absolute top-20 left-10 w-72 h-72 bg-blue-400/30 rounded-full blur-[120px]" />
 
-    {/* DARK */}
-    <div className="hidden dark:block">
-      <div className="absolute top-20 left-10 w-72 h-72 bg-blue-500 opacity-20 rounded-full blur-[140px]" />
-      <div className="absolute bottom-20 right-10 w-80 h-80 bg-blue-600 opacity-20 rounded-full blur-[160px]" />
-      <div className="absolute top-1/2 left-1/3 w-60 h-60 bg-blue-400 opacity-20 rounded-full blur-[140px]" />
-    </div>
+          <div className="absolute bottom-20 right-10 w-80 h-80 bg-blue-500/30 rounded-full blur-[140px]" />
 
+          <div className="absolute top-1/2 left-1/3 w-60 h-60 bg-blue-300/30 rounded-full blur-[120px]" />
 
+        </div>
+
+        {/* DARK */}
+        <div className="hidden dark:block">
+
+          <div className="absolute top-20 left-10 w-72 h-72 bg-blue-500/20 rounded-full blur-[140px]" />
+
+          <div className="absolute bottom-20 right-10 w-80 h-80 bg-blue-600/20 rounded-full blur-[160px]" />
+
+          <div className="absolute top-1/2 left-1/3 w-60 h-60 bg-blue-400/20 rounded-full blur-[140px]" />
+
+        </div>
+
+      </div>
 
       <SidebarProvider>
-      <AppSidebar user={userData} />
 
-     <SidebarInset className="bg-transparent">
-        <header className="flex h-16 items-center gap-2 px-4">
-          <SidebarTrigger />
+        <AppSidebar user={userData} />
 
-    <Breadcrumb>
-  <BreadcrumbList>
-    {rawSegments.map((segment, index) => {
-      // 🔥 ukryj te segmenty
-      if (segment === "inf03" || segment === "inf04") return null
+        <SidebarInset
+          className="
+            relative
+            z-10
+            bg-transparent
+            flex
+            flex-col
+            min-h-screen
+          "
+        >
 
-      const href =
-        "/" + rawSegments.slice(0, index + 1).join("/")
+          {/* HEADER */}
+          <header
+            className="
+              sticky
+              top-0
+              z-50
+              h-16
+              shrink-0
+              flex
+              items-center
+              gap-3
+              px-4
+              border-b
+              border-black/10
+              dark:border-white/10
+              bg-white/70
+              dark:bg-black/60
+              backdrop-blur-2xl
+            "
+          >
 
-      const labels: Record<string, string> = {
-        dashboard: "Dashboard",
-        settings: "Ustawienia",
-        html: "HTML",
-        css: "CSS",
-        js: "JavaScript",
-        php: "PHP",
-        sql: "SQL",
-      }
+            <SidebarTrigger />
 
-      const label =
-        labels[segment] ||
-        (Number(segment) ? `Lekcja ${segment}` : segment)
+            <Breadcrumb>
 
-      // 🔥 sprawdź czy to ostatni widoczny element
-      const visibleSegments = rawSegments.filter(
-        (seg) => seg !== "inf03" && seg !== "inf04"
-      )
+              <BreadcrumbList>
 
-      const visibleIndex = visibleSegments.indexOf(segment)
-      const isLast = visibleIndex === visibleSegments.length - 1
+                {rawSegments.map(
+                  (segment, index) => {
+                    if (
+                      segment === "inf03" ||
+                      segment === "inf04"
+                    ) {
+                      return null
+                    }
 
-      return (
-        
-        <div key={index} className="flex items-center gap-2">
-          {visibleIndex !== 0 && <BreadcrumbSeparator />}
+                    const href =
+                      "/" +
+                      rawSegments
+                        .slice(0, index + 1)
+                        .join("/")
 
-          <BreadcrumbItem>
-            {isLast ? (
-              <BreadcrumbPage className="font-semibold">
-                {label}
-              </BreadcrumbPage>
-            ) : (
-              <BreadcrumbLink asChild>
-                <Link href={href}>{label}</Link>
-              </BreadcrumbLink>
-            )}
-          </BreadcrumbItem>
-        </div>
-      )
-    })}
-  </BreadcrumbList>
-</Breadcrumb>
-        </header>
+                    const labels: Record<
+                      string,
+                      string
+                    > = {
+                      dashboard:
+                        "Dashboard",
 
-        <div className="flex flex-1 flex-col gap-4 p-4">
-          {children}
-        </div>
-      </SidebarInset>
-         </SidebarProvider>
+                      settings:
+                        "Ustawienia",
+
+                      html: "HTML",
+
+                      css: "CSS",
+
+                      js: "JavaScript",
+
+                      php: "PHP",
+
+                      sql: "SQL",
+                    }
+
+                    const label =
+                      labels[segment] ||
+                      (Number(segment)
+                        ? `Lekcja ${segment}`
+                        : segment)
+
+                    const visibleSegments =
+                      rawSegments.filter(
+                        (seg) =>
+                          seg !==
+                            "inf03" &&
+                          seg !==
+                            "inf04"
+                      )
+
+                    const visibleIndex =
+                      visibleSegments.indexOf(
+                        segment
+                      )
+
+                    const isLast =
+                      visibleIndex ===
+                      visibleSegments.length -
+                        1
+
+                    return (
+                      <div
+                        key={index}
+                        className="flex items-center gap-2"
+                      >
+
+                        {visibleIndex !==
+                          0 && (
+                          <BreadcrumbSeparator />
+                        )}
+
+                        <BreadcrumbItem>
+
+                          {isLast ? (
+                            <BreadcrumbPage className="font-semibold">
+                              {label}
+                            </BreadcrumbPage>
+                          ) : (
+                            <BreadcrumbLink asChild>
+                              <Link href={href}>
+                                {label}
+                              </Link>
+                            </BreadcrumbLink>
+                          )}
+
+                        </BreadcrumbItem>
+
+                      </div>
+                    )
+                  }
+                )}
+
+              </BreadcrumbList>
+
+            </Breadcrumb>
+
+          </header>
+
+          {/* CONTENT */}
+          <main
+            className={`
+              flex-1
+              min-h-0
+              p-10
+              
+
+              ${
+                isLessonPage
+                  ? "overflow-hidden"
+                  : "overflow-y-auto"
+              }
+            `}
+          >
+
+            <div
+              className={`
+                ${
+                  isLessonPage
+                    ? "h-full"
+                    : "min-h-full"
+                }
+              `}
+            >
+              {children}
+            </div>
+
+          </main>
+
+        </SidebarInset>
+
+      </SidebarProvider>
+
     </div>
-
   )
 }

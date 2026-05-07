@@ -1,211 +1,354 @@
 import { Step } from "@/lib/types"
 
 export const lesson3: Step[] = [
-
   {
     type: "text",
-    title: "📝 Tekst w HTML",
+    title: "📝 Nagłówki i tekst w HTML",
     content:
-`HTML pozwala tworzyć strukturę tekstu — nagłówki, akapity, wyróżnienia i cytaty.
+`Tekst jest jednym z najważniejszych elementów każdej strony internetowej.
 
-Dzięki temu:
-👉 tekst jest czytelny  
-👉 ma hierarchię  
-👉 przeglądarka wie co jest ważne`,
-  },
+To właśnie dzięki tekstowi użytkownik:
+👉 czyta informacje  
+👉 poznaje zawartość strony  
+👉 porusza się po sekcjach witryny  
 
-  // 🔥 NAGŁÓWKI
-  {
-    type: "code",
-    title: "🔝 Nagłówki",
-    content: `<h1>Tytuł strony</h1>
-<h2>Podtytuł</h2>
-<h3>Niższy poziom</h3>`,
-  },
+HTML posiada specjalne znaczniki służące do tworzenia:
+✔ nagłówków  
+✔ akapitów  
+✔ wyróżnionego tekstu  
+✔ cytatów  
+✔ opisów i sekcji tekstowych  
 
-  {
-    type: "text",
-    title: "💡 Nagłówki",
-    content:
-`Nagłówki tworzą strukturę strony.
-
-👉 <h1> to główny tytuł  
-👉 <h2>, <h3> itd. to kolejne poziomy  
-
-Dzięki nim łatwiej czytać i organizować treść.`,
-  },
-
-  // 🔥 PARAGRAF
-  {
-    type: "code",
-    title: "📄 Paragraf",
-    content: `<p>To jest zwykły tekst w paragrafie.</p>`,
+Dobrze zorganizowany tekst sprawia, że strona:
+✅ wygląda profesjonalnie  
+✅ jest czytelna  
+✅ łatwiej się ją przegląda`,
   },
 
   {
     type: "text",
-    title: "💡 Paragraf",
+    title: "🔠 Czym są nagłówki?",
     content:
-`<p> to podstawowy element tekstu.
+`Nagłówki służą do tworzenia tytułów i sekcji na stronie internetowej.
 
-Każdy blok tekstu powinien być w osobnym paragrafie.`,
+HTML posiada 6 poziomów nagłówków:
+<h1> do <h6>
+
+📌 Najważniejszy jest:
+<h1>
+
+Im wyższy numer:
+👉 tym mniej ważny nagłówek  
+👉 tym mniejszy rozmiar domyślny  
+
+Nagłówki pomagają:
+✔ organizować treść  
+✔ tworzyć sekcje  
+✔ poprawiać czytelność strony`,
   },
 
-  // 🔥 BR / HR
   {
     type: "code",
-    title: "↩️ Nowa linia i separator",
-    content: `Linia 1<br>
-Linia 2
-
-<hr>`,
+    title: "👀 Wszystkie poziomy nagłówków",
+    content: `<h1>Nagłówek poziomu 1</h1>
+<h2>Nagłówek poziomu 2</h2>
+<h3>Nagłówek poziomu 3</h3>
+<h4>Nagłówek poziomu 4</h4>
+<h5>Nagłówek poziomu 5</h5>
+<h6>Nagłówek poziomu 6</h6>`,
   },
 
   {
     type: "text",
-    title: "💡 <br> i <hr>",
+    title: "⭐ Znacznik <h1>",
     content:
-`<br> łamie linię (jak enter)  
-<hr> tworzy linię oddzielającą treść  
+`<h1> jest najważniejszym nagłówkiem na stronie.
 
-Używaj ich z umiarem.`,
-  },
+Najczęściej używa się go jako:
+👉 tytułu strony  
+👉 głównego tematu artykułu  
+👉 nazwy witryny  
 
-  // 🔥 STRONG / EM
-  {
-    type: "code",
-    title: "💪 Wyróżnianie tekstu",
-    content: `<strong>Ważne</strong>
-<em>Podkreślone</em>`,
+Dobra praktyka:
+✅ używaj jednego <h1> na stronę  
+
+Przykład:
+<h1>Kurs HTML</h1>`,
   },
 
   {
     type: "text",
-    title: "💡 Wyróżnienia",
+    title: "📄 Akapity tekstu",
     content:
-`<strong> oznacza ważność  
-<em> podkreśla znaczenie  
+`Do tworzenia zwykłego tekstu używa się znacznika:
+<p>
 
-To nie tylko wygląd — to sens tekstu.`,
+Każdy akapit powinien zawierać jedną logiczną część tekstu.
+
+Przeglądarka automatycznie:
+✔ oddziela akapity  
+✔ dodaje odstępy między nimi  
+
+📌 Tekstu nie powinno się pisać „luzem” bez znacznika <p>.`,
   },
 
-  // 🔥 B / I
   {
     type: "code",
-    title: "🎨 Styl (wizualny)",
-    content: `<b>Pogrubienie</b>
-<i>Kursywa</i>`,
+    title: "💡 Przykład akapitów",
+    content: `<p>HTML jest językiem znaczników.</p>
+
+<p>Dzięki HTML możemy tworzyć strony internetowe.</p>`,
   },
 
   {
     type: "text",
-    title: "⚠️ Styl vs znaczenie",
+    title: "⚠️ Dlaczego struktura tekstu jest ważna?",
     content:
-`<b> i <i> zmieniają tylko wygląd.
+`Źle zorganizowany tekst jest trudny do czytania.
 
-<strong> i <em> dodają znaczenie.
+Dobra struktura:
+✅ poprawia czytelność  
+✅ pomaga użytkownikowi znaleźć informacje  
+✅ sprawia, że strona wygląda profesjonalnie  
 
-👉 lepiej używać strong i em`,
+Przykład dobrej organizacji:
+✔ główny nagłówek  
+✔ sekcje  
+✔ krótkie akapity  
+✔ logiczny układ treści`,
   },
 
-  // 🔥 MARK / SMALL
   {
-    type: "code",
-    title: "✨ Dodatkowe elementy",
-    content: `<mark>Podświetlenie</mark>
-<small>Mniejszy tekst</small>`,
+    type: "text",
+    title: "🖍 Wyróżnianie tekstu",
+    content:
+`HTML pozwala wyróżniać fragmenty tekstu.
+
+Najpopularniejsze znaczniki:
+
+<strong>
+👉 ważny tekst (pogrubienie)
+
+<em>
+👉 tekst wyróżniony (kursywa)
+
+<mark>
+👉 podświetlenie tekstu
+
+<small>
+👉 mniejszy tekst`,
   },
 
-  // 🔥 CYTATY
   {
     type: "code",
-    title: "💬 Cytaty",
-    content: `<q>Krótki cytat</q>
+    title: "✨ Przykłady formatowania tekstu",
+    content: `<p><strong>To jest ważna informacja.</strong></p>
+
+<p><em>To jest tekst zapisany kursywą.</em></p>
+
+<p><mark>Ten tekst jest podświetlony.</mark></p>
+
+<p><small>To jest mniejszy tekst.</small></p>`,
+  },
+
+  {
+    type: "text",
+    title: "📌 Znacznik <br>",
+    content:
+`<br> służy do przechodzenia do nowej linii.
+
+Nie tworzy nowego akapitu.
+Tworzy jedynie „enter” w tekście.
+
+Przykład zastosowania:
+✔ adresy  
+✔ wiersze tekstu  
+✔ poezja`,
+  },
+
+  {
+    type: "code",
+    title: "↩ Przykład użycia <br>",
+    content: `<p>
+Jan Kowalski<br>
+Warszawa<br>
+Polska
+</p>`,
+  },
+
+  {
+    type: "text",
+    title: "📚 Cytaty i opisy",
+    content:
+`HTML posiada również znaczniki do cytowania tekstu.
 
 <blockquote>
-Dłuższy cytat
-</blockquote>`,
+👉 dłuższy cytat
+
+<q>
+👉 krótki cytat w linii tekstu
+
+Cytaty pomagają:
+✔ oddzielić cudzą wypowiedź  
+✔ zwiększyć czytelność tekstu`,
   },
 
-  {
-    type: "text",
-    title: "💡 Cytaty",
-    content:
-`<q> działa w środku zdania  
-<blockquote> tworzy blok tekstu  
-
-Używaj ich do wyróżnienia wypowiedzi.`,
-  },
-
-  // 🔥 PRE
   {
     type: "code",
-    title: "📦 Formatowanie tekstu",
-    content: `<pre>
-Linia 1
-    Linia 2
-</pre>`,
+    title: "💬 Przykład cytatów",
+    content: `<blockquote>
+HTML jest podstawą każdej strony internetowej.
+</blockquote>
+
+<p>Autor powiedział:
+<q>Programowanie wymaga praktyki.</q>
+</p>`,
   },
 
   {
     type: "text",
-    title: "💡 <pre>",
+    title: "⚠️ Najczęstsze błędy",
     content:
-`Zachowuje spacje i enter.
+`Podczas pracy z tekstem początkujący często:
+❌ używają wielu <br> zamiast akapitów  
+❌ pomijają znaczniki <p>  
+❌ używają kilku <h1> bez potrzeby  
+❌ tworzą bardzo długie bloki tekstu  
+❌ mieszają poziomy nagłówków chaotycznie  
 
-Idealne do kodu lub specjalnego formatowania.`,
+Dobra struktura tekstu powinna być:
+✔ logiczna  
+✔ czytelna  
+✔ uporządkowana`,
   },
 
-  // 🔥 ZADANIE
+  {
+    type: "code",
+    title: "🧱 Kompletny przykład tekstu",
+    content: `<h1>Kurs HTML</h1>
+
+<h2>Wprowadzenie</h2>
+
+<p>
+HTML jest językiem używanym do tworzenia stron internetowych.
+</p>
+
+<h2>Dlaczego warto uczyć się HTML?</h2>
+
+<p>
+HTML jest podstawą nowoczesnego web developmentu.
+</p>
+
+<p>
+<strong>Bez HTML nie istnieją strony internetowe.</strong>
+</p>`,
+  },
+
   {
     type: "code-task",
-    title: "💻 Twoje zadanie",
+    title: "💻 Zadanie praktyczne",
     content:
-`Stwórz stronę z tekstem:
+`Stwórz prostą stronę zawierającą:
 
-✔ nagłówek (<h1>)  
-✔ paragraf (<p>)  
-✔ ważne słowo (<strong>)  
-✔ kursywa (<em>)  
-✔ cytat (<q>)  
-✔ nowa linia (<br>)  
+👉 nagłówek <h1>  
+👉 podnagłówek <h2>  
+👉 dwa akapity <p>  
+👉 wyróżniony tekst za pomocą <strong>  
 
-👉 spróbuj napisać coś o sobie`,
+Temat:
+„Dlaczego chcę uczyć się programowania?”`,
   },
 
-  // 🔥 QUIZ
   {
     type: "quiz",
-    question: "Który tag oznacza ważny tekst?",
+    question: "Który znacznik tworzy najważniejszy nagłówek?",
     answers: [
-      "<b>",
+      "<head>",
+      "<h6>",
+      "<h1>",
+      "<title>",
+    ],
+    correct: 2,
+    explanation:
+`<h1> jest najważniejszym nagłówkiem w dokumencie HTML.`,
+  },
+
+  {
+    type: "quiz",
+    question: "Który znacznik służy do tworzenia akapitu?",
+    answers: [
+      "<text>",
+      "<paragraph>",
+      "<p>",
+      "<article>",
+    ],
+    correct: 2,
+    explanation:
+`Znacznik <p> służy do tworzenia akapitów tekstu.`,
+  },
+
+  {
+    type: "quiz",
+    question: "Który znacznik powoduje przejście do nowej linii?",
+    answers: [
+      "<br>",
+      "<hr>",
+      "<line>",
+      "<new>",
+    ],
+    correct: 0,
+    explanation:
+`<br> tworzy przejście do nowej linii.`,
+  },
+
+  {
+    type: "quiz",
+    question: "Który znacznik wyróżnia ważny tekst?",
+    answers: [
+      "<div>",
       "<strong>",
-      "<i>",
-      "<small>",
+      "<section>",
+      "<main>",
     ],
     correct: 1,
     explanation:
-`<strong> oznacza ważność.
+`<strong> oznacza ważny fragment tekstu.`,
+  },
 
-<b> zmienia tylko wygląd.`,
+  {
+    type: "quiz",
+    question: "Do czego służy znacznik <blockquote>?",
+    answers: [
+      "Do obrazów",
+      "Do tworzenia linków",
+      "Do dłuższych cytatów",
+      "Do tabel",
+    ],
+    correct: 2,
+    explanation:
+`<blockquote> służy do wyświetlania większych cytatów.`,
   },
 ]
 
 export const lesson3Summary = {
-  title: "📚 Podsumowanie",
+  title: "📚 Podsumowanie lekcji",
   content: `
-HTML pozwala strukturyzować tekst.
+HTML pozwala tworzyć uporządkowaną i czytelną strukturę tekstu.
 
-Najważniejsze elementy:
-
-✔ <h1>–<h6> → nagłówki  
-✔ <p> → paragraf  
+Najważniejsze znaczniki:
+✔ <h1> - <h6> → nagłówki  
+✔ <p> → akapit  
 ✔ <strong> → ważny tekst  
-✔ <em> → podkreślenie znaczenia  
+✔ <em> → kursywa  
+✔ <mark> → podświetlenie  
 ✔ <br> → nowa linia  
-✔ <q>, <blockquote> → cytaty  
-✔ <pre> → zachowanie formatowania  
+✔ <blockquote> → cytat  
 
-Dobrze użyte tagi sprawiają, że tekst jest czytelny i logiczny.
+Zapamiętaj:
+👉 nagłówki organizują treść  
+👉 akapity poprawiają czytelność  
+👉 dobrze uporządkowany tekst wygląda profesjonalnie  
+
+Dobra struktura tekstu jest podstawą nowoczesnych stron internetowych.
 `,
 }

@@ -1,0 +1,101 @@
+@import "tailwindcss";
+
+@custom-variant dark (&:is(.dark *));
+
+html,
+body,
+:root {
+  height: 100%;
+}
+
+/* =========================
+   GLOBAL BACKGROUND
+========================= */
+
+body {
+  background: white;
+}
+
+.dark body {
+  background: black;
+}
+
+/* =========================
+   SMOOTH SCROLL
+========================= */
+
+html {
+  scroll-behavior: smooth;
+}
+
+/* =========================
+   GLOBAL SCROLLBAR
+========================= */
+
+/* CHROME / EDGE / SAFARI */
+*::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+*::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+*::-webkit-scrollbar-thumb {
+  background: linear-gradient(
+    180deg,
+    #60a5fa,
+    #2563eb
+  );
+
+  border-radius: 9999px;
+  border: 2px solid transparent;
+  background-clip: padding-box;
+}
+
+*::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(
+    180deg,
+    #93c5fd,
+    #3b82f6
+  );
+}
+
+/* FIREFOX */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: #3b82f6 transparent;
+}
+
+/* =========================
+   SELECTION
+========================= */
+
+::selection {
+  background: rgba(59, 130, 246, 0.3);
+  color: inherit;
+}
+
+/* =========================
+   REMOVE WHITE INPUT BG
+========================= */
+
+input,
+textarea,
+select {
+  background-color: transparent;
+}
+
+/* =========================
+   FIX AUTOFILL
+========================= */
+
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus,
+textarea:-webkit-autofill {
+  -webkit-box-shadow: 0 0 0px 1000px transparent inset;
+  -webkit-text-fill-color: white;
+  transition: background-color 9999s ease-in-out 0s;
+}

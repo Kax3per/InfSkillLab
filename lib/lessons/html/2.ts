@@ -1,185 +1,284 @@
 import { Step } from "@/lib/types"
 
 export const lesson2: Step[] = [
-
   {
     type: "text",
-    title: "🏗 Struktura strony HTML",
+    title: "🌐 Dlaczego strony mają strukturę?",
     content:
-`Każda strona HTML ma swój szkielet.
+`Każda strona internetowa musi posiadać uporządkowaną strukturę.
 
-To nie jest opcjonalne — to PODSTAWA.
+Przeglądarka internetowa nie „rozumie” strony tak jak człowiek. Ona analizuje kod linia po linii i na tej podstawie buduje widok strony.
 
-Bez struktury:
-❌ strona może działać źle  
-❌ przeglądarka może zgadywać co masz na myśli  
+Jeżeli dokument HTML jest źle zbudowany:
+❌ elementy mogą wyświetlać się niepoprawnie  
+❌ style CSS mogą działać błędnie  
+❌ część strony może w ogóle nie działać  
 
-👉 Myślisz o stronie jak o budynku:
-najpierw konstrukcja → potem reszta`,
+Dlatego każda strona posiada określony szkielet.
+
+📌 Na egzaminie INF.03 bardzo często pojawiają się zadania wymagające stworzenia kompletnej struktury dokumentu HTML.`,
   },
 
   {
     type: "text",
-    title: "🧠 Jak to zapamiętać?",
+    title: "🧠 Jak przeglądarka widzi stronę?",
     content:
-`HTML ma 3 kluczowe elementy:
+`Przeglądarka analizuje kod HTML od góry do dołu.
 
-<html> → cała strona  
-<head> → ustawienia (niewidoczne)  
-<body> → to co widzi użytkownik  
+Każdy element ma określoną rolę:
+👉 informuje co znajduje się na stronie  
+👉 określa gdzie element powinien się znajdować  
+👉 pomaga poprawnie wyświetlić zawartość  
 
-👉 wszystko co widzisz na stronie = body`,
+Dokument HTML można porównać do książki:
+
+📖 okładka → informacje o stronie  
+📖 spis treści → organizacja  
+📖 treść → zawartość dla użytkownika  
+
+W HTML rolę „treści książki” pełni element <body>.`,
   },
 
   {
     type: "code",
-    title: "📄 Podstawowy szablon",
-    content: `<!DOCTYPE html>
-<html>
-<head>
-  <title>Moja strona</title>
-</head>
-<body>
-
-</body>
-</html>`,
-  },
-
-  {
-    type: "text",
-    title: "⚠️ DOCTYPE — co to?",
-    content:
-`<!DOCTYPE html>
-
-👉 mówi przeglądarce: "to jest HTML5"
-
-Jeśli tego nie ma:
-❌ strona może działać dziwnie  
-❌ layout może się psuć  
-
-👉 ZAWSZE dawaj na górze`,
-  },
-
-  {
-    type: "text",
-    title: "🌍 <html>",
-    content:
-`<html> to kontener całej strony.
-
-Wszystko MUSI być w środku.
-
-👉 to jak pudełko na całą stronę`,
-  },
-
-  {
-    type: "text",
-    title: "⚙️ <head>",
-    content:
-`<head> zawiera rzeczy których NIE widzisz:
-
-- tytuł strony (title)
-- meta dane
-- style (CSS)
-- skrypty (JS)
-
-👉 użytkownik tego nie widzi`,
-  },
-
-  {
-    type: "text",
-    title: "👀 <body>",
-    content:
-`<body> to NAJWAŻNIEJSZE miejsce.
-
-Tu trafia wszystko co widzi użytkownik:
-
-✔ nagłówki  
-✔ tekst  
-✔ obrazki  
-✔ linki  
-
-👉 jeśli coś nie jest w body → nie istnieje dla użytkownika`,
-  },
-
-  {
-    type: "code",
-    title: "💡 Przykład strony",
+    title: "📄 Kompletny szablon HTML",
     content: `<!DOCTYPE html>
 <html>
 <head>
   <title>Moja pierwsza strona</title>
 </head>
+
 <body>
-  <h1>Cześć!</h1>
-  <p>To jest moja strona</p>
+  <h1>Witaj świecie</h1>
+  <p>To jest moja strona internetowa.</p>
 </body>
 </html>`,
   },
 
   {
     type: "text",
-    title: "❌ Najczęstsze błędy",
+    title: "🏷 Element <!DOCTYPE html>",
     content:
-`Na egzaminie to zabija punkty:
+`Deklaracja <!DOCTYPE html> znajduje się ZAWSZE na początku dokumentu.
 
-❌ brak DOCTYPE  
-❌ elementy poza <body>  
-❌ brak <html>  
+Jej zadaniem jest poinformowanie przeglądarki:
+👉 że dokument korzysta z HTML5  
+
+Brak tej deklaracji może powodować:
+❌ błędne wyświetlanie strony  
+❌ problemy ze stylami CSS  
+❌ niezgodność między przeglądarkami  
+
+📌 Na egzaminie praktycznym bardzo często sprawdzane jest czy dokument posiada poprawny DOCTYPE.`,
+  },
+
+  {
+    type: "text",
+    title: "📦 Element <html>",
+    content:
+`<html> jest głównym kontenerem całego dokumentu.
+
+Wszystkie elementy strony muszą znajdować się wewnątrz tego znacznika.
+
+Przykład:
+<html>
+  ...
+</html>
+
+📌 Jeżeli element znajduje się poza <html>, dokument jest niepoprawny.`,
+  },
+
+  {
+    type: "code",
+    title: "👀 Przykład użycia <html>",
+    content: `<!DOCTYPE html>
+<html>
+
+<head>
+  <title>Przykład</title>
+</head>
+
+<body>
+  <h1>Nagłówek</h1>
+</body>
+
+</html>`,
+  },
+
+  {
+    type: "text",
+    title: "⚙️ Sekcja <head>",
+    content:
+`<head> zawiera informacje konfiguracyjne strony.
+
+Elementy znajdujące się w <head> nie są widoczne bezpośrednio na stronie.
+
+Najczęściej znajdują się tam:
+✔ tytuł strony  
+✔ meta dane  
+✔ połączenia z CSS  
+✔ skrypty JavaScript  
+
+📌 Bardzo ważnym elementem jest <title>.`,
+  },
+
+  {
+    type: "code",
+    title: "📌 Przykład sekcji <head>",
+    content: `<head>
+  <title>Kurs HTML</title>
+</head>`,
+  },
+
+  {
+    type: "text",
+    title: "🖥 Element <body>",
+    content:
+`<body> zawiera CAŁĄ widoczną zawartość strony.
+
+To właśnie tutaj umieszczamy:
+✔ nagłówki  
+✔ tekst  
+✔ obrazy  
+✔ listy  
+✔ linki  
+✔ tabele  
+
+📌 Jeżeli element nie znajduje się w <body>, użytkownik zazwyczaj go nie zobaczy.`,
+  },
+
+  {
+    type: "code",
+    title: "💡 Przykład zawartości body",
+    content: `<body>
+  <h1>Moja strona</h1>
+
+  <p>Witam na mojej stronie internetowej.</p>
+</body>`,
+  },
+
+  {
+    type: "text",
+    title: "⚠️ Najczęstsze błędy na egzaminie",
+    content:
+`Podczas egzaminu INF.03 uczniowie bardzo często tracą punkty przez podstawowe błędy.
+
+Najczęstsze problemy:
+❌ brak <!DOCTYPE html>  
 ❌ brak zamknięcia tagów  
+❌ elementy poza <body>  
+❌ brak <title>  
+❌ niepoprawna kolejność elementów  
 
-👉 egzaminator widzi to od razu`,
+📌 Egzaminator zwraca uwagę nie tylko na wygląd strony, ale również na poprawność kodu.`,
+  },
+
+  {
+    type: "text",
+    title: "🧩 Kolejność elementów",
+    content:
+`Prawidłowa kolejność elementów w dokumencie HTML:
+
+1️⃣ <!DOCTYPE html>  
+2️⃣ <html>  
+3️⃣ <head>  
+4️⃣ <body>  
+
+📌 Niepoprawna kolejność może powodować błędy w interpretacji strony przez przeglądarkę.`,
   },
 
   {
     type: "code-task",
-    title: "💻 Twoje zadanie",
+    title: "💻 Zadanie praktyczne",
     content:
-`Stwórz pełną stronę HTML:
+`Napisz podstawową strukturę strony HTML.
 
-✔ <!DOCTYPE html>  
-✔ <html>  
-✔ <head> + <title>  
-✔ <body>  
-✔ <h1>  
-✔ <p>  
+Dodaj:
+👉 <!DOCTYPE html>  
+👉 <html>  
+👉 <head>  
+👉 <title>  
+👉 <body>  
+👉 nagłówek <h1>  
+👉 paragraf <p>  
 
-👉 to jest dokładnie zadanie egzaminacyjne`,
+Temat strony:
+„Moja pierwsza witryna internetowa”`,
   },
 
   {
     type: "quiz",
-    question: "Który element zawiera to co widzi użytkownik?",
+    question: "Który element zawiera widoczną zawartość strony?",
     answers: [
       "<head>",
-      "<html>",
       "<body>",
       "<title>",
+      "<meta>",
+    ],
+    correct: 1,
+    explanation:
+`Element <body> zawiera wszystkie elementy widoczne dla użytkownika.`,
+  },
+
+  {
+    type: "quiz",
+    question: "Gdzie powinien znajdować się znacznik <title>?",
+    answers: [
+      "W <body>",
+      "Poza dokumentem HTML",
+      "W <head>",
+      "W <footer>",
     ],
     correct: 2,
     explanation:
-`<body> zawiera wszystko co widzi użytkownik.
+`Znacznik <title> zawsze znajduje się wewnątrz sekcji <head>.`,
+  },
 
-To najważniejszy element strony.`,
+  {
+    type: "quiz",
+    question: "Jaką funkcję pełni <!DOCTYPE html>?",
+    answers: [
+      "Dodaje nagłówek",
+      "Informuje o użyciu HTML5",
+      "Tworzy sekcję body",
+      "Łączy CSS",
+    ],
+    correct: 1,
+    explanation:
+`<!DOCTYPE html> informuje przeglądarkę, że dokument korzysta z HTML5.`,
+  },
+
+  {
+    type: "quiz",
+    question: "Który zapis przedstawia poprawną strukturę HTML?",
+    answers: [
+      "<body><head></head></body>",
+      "<html><body></body></html>",
+      "<head><body></body></head>",
+      "<title><html></html></title>",
+    ],
+    correct: 1,
+    explanation:
+`Element <body> powinien znajdować się wewnątrz <html>.`,
   },
 ]
 
 export const lesson2Summary = {
-  title: "📚 Podsumowanie: Struktura HTML",
+  title: "📚 Podsumowanie lekcji",
   content: `
-Każda strona HTML ma szkielet.
+Każda strona internetowa posiada określoną strukturę HTML.
 
-Najważniejsze elementy:
-
+Najważniejsze elementy dokumentu:
 ✔ <!DOCTYPE html> — informuje o HTML5  
-✔ <html> — cały dokument  
-✔ <head> — ustawienia (niewidoczne)  
-✔ <body> — zawartość strony  
+✔ <html> — główny kontener dokumentu  
+✔ <head> — ustawienia strony  
+✔ <body> — widoczna zawartość strony  
 
 Zapamiętaj:
+👉 wszystko co widzi użytkownik znajduje się w <body>  
+👉 poprawna struktura jest bardzo ważna na egzaminie INF.03  
+👉 brak zamknięcia tagów to częsty błąd uczniów  
 
-👉 wszystko co widzisz = body  
-👉 brak struktury = błędy  
-
-To jest jedna z NAJWAŻNIEJSZYCH rzeczy na egzaminie INF03.
+📌 Poprawna struktura HTML to fundament każdej strony internetowej.
 `,
 }
