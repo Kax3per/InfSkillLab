@@ -12,7 +12,16 @@ import {
   ArrowRight,
   Clock3,
   BookOpen,
+  Code2,
 } from "lucide-react"
+
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select"
 
 // 🔥 RANK SYSTEM
 function getRank(xp: number) {
@@ -65,7 +74,7 @@ const motivationNotes = [
 ]
 
 export default function DashboardPage() {
-  const totalLessons = 9
+  const totalLessons = 10
   const pathname = usePathname()
 
   // 🔥 STATES
@@ -387,17 +396,60 @@ const randomNote =
                 </p>
               </div>
 
-              <div
-                className="
-                  flex h-16 w-16 items-center justify-center
-                  rounded-2xl
-                  bg-gradient-to-br
-                  from-violet-500
-                  to-blue-500
-                "
-              >
-                <Sparkles className="h-7 w-7 text-white" />
-              </div>
+  
+
+  {/* SELECT */}
+<Select defaultValue="html">
+
+  <SelectTrigger
+    className="
+      h-12 rounded-2xl
+                    
+      border-black/5
+      dark:border-white/10
+
+      bg-white/70
+      dark:bg-white/[0.03]
+
+      backdrop-blur-xl
+
+      hover:scale-[1.02]
+      transition-all
+    "
+  >
+    <SelectValue placeholder="Wybierz język" />
+  </SelectTrigger>
+
+  <SelectContent
+    className="
+      rounded-2xl
+
+      border-black/5
+      dark:border-white/10
+
+      bg-white/90
+      dark:bg-[#0B1120]/95
+
+      backdrop-blur-2xl
+    "
+  >
+
+    <SelectItem value="html">HTML</SelectItem>
+    <SelectItem value="css">CSS</SelectItem>
+    <SelectItem value="js">JavaScript</SelectItem>
+    <SelectItem value="ts">TypeScript</SelectItem>
+    <SelectItem value="react">React</SelectItem>
+    <SelectItem value="next">Next.js</SelectItem>
+    <SelectItem value="node">Node.js</SelectItem>
+    <SelectItem value="php">PHP</SelectItem>
+    <SelectItem value="sql">SQL</SelectItem>
+    <SelectItem value="python">Python</SelectItem>
+
+  </SelectContent>
+
+</Select>
+
+
             </div>
 
             {/* BUTTON */}

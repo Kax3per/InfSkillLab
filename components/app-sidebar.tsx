@@ -5,9 +5,10 @@ import Image from "next/image"
 import Link from "next/link"
 import { useSidebar } from "@/components/ui/sidebar"
 
-import { Settings, BookOpenIcon } from "lucide-react"
+import { Settings, BookOpenIcon, LayoutDashboard } from "lucide-react"
 
 import { NavMain } from "@/components/nav-main"
+import { usePathname } from "next/navigation"
 import { NavUser } from "@/components/nav-user"
 
 import {
@@ -56,6 +57,8 @@ export function AppSidebar({
   user,
   ...props
 }: React.ComponentProps<typeof Sidebar> & { user: any }) {
+  const pathname = usePathname()
+const { isMobile, setOpenMobile } = useSidebar()
   return (
     <Sidebar collapsible="icon" 
     className="bg-transparent"
@@ -63,7 +66,7 @@ export function AppSidebar({
 
       {/* 🔥 LOGO */}
       <SidebarHeader>
-        <div className="flex items-center h-16 bg-transparent">
+        <div className="flex items-center h-16">
 
           <Image
             src="/images/logoBlack.png"
@@ -89,9 +92,39 @@ export function AppSidebar({
       {/* 🔥 MENU */}
       <SidebarContent>
 
+        {/* DASHBOARD BUTTON */}
+<div className="px-2 py-2">
+  <Link
+    href="/dashboard"
+    onClick={() => {
+      if (isMobile) {
+        setOpenMobile(false)
+      }
+    }}
+  >
+    <button
+      className={`
+        w-full flex items-center gap-2 px-3 py-2
+        rounded-xl transition
+        ${
+          pathname === "/dashboard"
+            ? "bg-muted font-medium"
+            : "hover:bg-muted"
+        }
+      `}
+    >
+      <LayoutDashboard className="w-4 h-4" />
+      <span>Dashboard</span>
+    </button>
+  </Link>
+</div>
         {/* SETTINGS BUTTON */}
-        <div className="px-2 py-2 bg-transparent">
-          <Link href="/dashboard/settings">
+        <div className="px-2 py-2 ">
+          <Link href="/dashboard/settings" onClick={() => {
+      if (isMobile) {
+        setOpenMobile(false)
+      }
+    }}>
             <button
               className="
                 w-full flex items-center gap-2 px-3 py-2

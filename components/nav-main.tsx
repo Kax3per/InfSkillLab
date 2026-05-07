@@ -18,6 +18,7 @@ import {
 import { ChevronRightIcon } from "lucide-react"
 import Link from "next/link"
 import { useSidebar } from "@/components/ui/sidebar"
+import { usePathname } from "next/navigation"
 type NavItem = {
   title: string
   url?: string
@@ -29,10 +30,18 @@ type NavItem = {
 // 🔥 REKURENCJA
 function RenderItem(item: NavItem) {
   const hasChildren = item.items && item.items.length > 0
-const { setOpen } = useSidebar()
+const { setOpen, setOpenMobile, isMobile } = useSidebar()
+const pathname = usePathname()
+const isActive = pathname === item.url
+const isChildActive = item.items?.some(
+  (sub) =>
+    sub.url === pathname ||
+    sub.items?.some((nested) => nested.url === pathname)
+)
+
   if (hasChildren) {
     return (
-      <Collapsible key={item.title} className="group/collapsible">
+      <Collapsible key={item.title} className="group/collapsible" defaultOpen={isChildActive}>
         <SidebarMenuItem>
           <CollapsibleTrigger asChild>
             <SidebarMenuButton   onClick={() => setOpen(true)}>
@@ -55,15 +64,22 @@ const { setOpen } = useSidebar()
   }
 
   // 🔹 najniższy poziom (link)
-  return (
-    <SidebarMenuSubItem key={item.title}>
-      <SidebarMenuSubButton asChild>
-        <Link href={item.url || "#"}>
-          <span>{item.title}</span>
-        </Link>
-      </SidebarMenuSubButton>
-    </SidebarMenuSubItem>
-  )
+return (
+  <SidebarMenuSubItem key={item.title}>
+    <SidebarMenuSubButton   isActive={isActive}>
+      <Link
+        href={item.url || "#"}
+        onClick={() => {
+          if (isMobile) {
+            setOpenMobile(false)
+          }
+        }}
+      >
+        <span>{item.title}</span>
+      </Link>
+    </SidebarMenuSubButton>
+  </SidebarMenuSubItem>
+)
 }
 
 export function NavMain({ items }: { items: NavItem[] }) {

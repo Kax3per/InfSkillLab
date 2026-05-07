@@ -192,31 +192,6 @@ export default function DashboardLayout({
     <div className="relative min-h-screen bg-white dark:bg-black lesson-scroll">
 
       {/* BACKGROUND */}
-      <div className="fixed inset-0 z-0 pointer-events-none">
-
-        {/* LIGHT */}
-        <div className="dark:hidden">
-
-          <div className="absolute top-20 left-10 w-72 h-72 bg-blue-400/30 rounded-full blur-[120px]" />
-
-          <div className="absolute bottom-20 right-10 w-80 h-80 bg-blue-500/30 rounded-full blur-[140px]" />
-
-          <div className="absolute top-1/2 left-1/3 w-60 h-60 bg-blue-300/30 rounded-full blur-[120px]" />
-
-        </div>
-
-        {/* DARK */}
-        <div className="hidden dark:block">
-
-          <div className="absolute top-20 left-10 w-72 h-72 bg-blue-500/20 rounded-full blur-[140px]" />
-
-          <div className="absolute bottom-20 right-10 w-80 h-80 bg-blue-600/20 rounded-full blur-[160px]" />
-
-          <div className="absolute top-1/2 left-1/3 w-60 h-60 bg-blue-400/20 rounded-full blur-[140px]" />
-
-        </div>
-
-      </div>
 
       <SidebarProvider>
 
