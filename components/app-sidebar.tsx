@@ -90,56 +90,113 @@ const { isMobile, setOpenMobile } = useSidebar()
       </SidebarHeader>
 
       {/* 🔥 MENU */}
-      <SidebarContent>
+<SidebarContent>
 
-        {/* DASHBOARD BUTTON */}
-<div className="px-2 py-2">
-  <Link
-    href="/dashboard"
-    onClick={() => {
-      if (isMobile) {
-        setOpenMobile(false)
-      }
-    }}
-  >
-    <button
-      className={`
-        w-full flex items-center gap-2 px-3 py-2
-        rounded-xl transition
-        ${
-          pathname === "/dashboard"
-            ? "bg-muted font-medium"
-            : "hover:bg-muted"
+  {/* DASHBOARD */}
+  <div className="px-2 py-1">
+
+    <Link
+      href="/dashboard"
+      onClick={() => {
+        if (isMobile) {
+          setOpenMobile(false)
         }
-      `}
+      }}
     >
-      <LayoutDashboard className="w-4 h-4" />
-      <span>Dashboard</span>
-    </button>
-  </Link>
-</div>
-        {/* SETTINGS BUTTON */}
-        <div className="px-2 py-2 ">
-          <Link href="/dashboard/settings" onClick={() => {
-      if (isMobile) {
-        setOpenMobile(false)
-      }
-    }}>
-            <button
-              className="
-                w-full flex items-center gap-2 px-3 py-2
-                rounded-xl hover:bg-muted transition
-              "
-            >
-              <Settings className="w-4 h-4" />
-              <span>Ustawienia</span>
-            </button>
-          </Link>
-        </div>
 
-        <NavMain items={data.navMain} />
+      <button
+        className={`
+          flex w-full items-center gap-3
 
-      </SidebarContent>
+          rounded-xl
+
+          px-10 py-2
+
+          transition-all
+
+          group-data-[collapsible=icon]:justify-center
+          group-data-[collapsible=icon]:px-2
+
+          ${
+            pathname === "/dashboard"
+              ? "bg-muted font-medium"
+              : "hover:bg-muted"
+          }
+        `}
+      >
+
+        <LayoutDashboard className="h-4 w-4 shrink-0" />
+
+        <span
+          className="
+            truncate
+
+            group-data-[collapsible=icon]:hidden
+          "
+        >
+          Dashboard
+        </span>
+
+      </button>
+
+    </Link>
+
+  </div>
+
+  {/* SETTINGS */}
+  <div className="px-2 py-1">
+
+    <Link
+      href="/dashboard/settings"
+      onClick={() => {
+        if (isMobile) {
+          setOpenMobile(false)
+        }
+      }}
+    >
+
+      <button
+        className={`
+          flex w-full items-center gap-3
+
+          rounded-xl
+
+          px-10 py-2
+
+          transition-all
+
+          group-data-[collapsible=icon]:justify-center
+          group-data-[collapsible=icon]:px-2
+
+          ${
+            pathname === "/dashboard/settings"
+              ? "bg-muted font-medium"
+              : "hover:bg-muted"
+          }
+        `}
+      >
+
+        <Settings className="h-4 w-4 shrink-0" />
+
+        <span
+          className="
+            truncate
+
+            group-data-[collapsible=icon]:hidden
+          "
+        >
+          Ustawienia
+        </span>
+
+      </button>
+
+    </Link>
+
+  </div>
+
+  <NavMain items={data.navMain} />
+
+</SidebarContent>
 
       {/* USER */}
       <SidebarFooter>
