@@ -65,7 +65,7 @@ const motivationNotes = [
 ]
 
 export default function DashboardPage() {
-  const totalLessons = 8
+  const totalLessons = 9
   const pathname = usePathname()
 
   // 🔥 STATES
