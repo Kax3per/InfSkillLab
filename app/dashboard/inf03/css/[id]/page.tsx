@@ -1,19 +1,25 @@
 "use client"
 
-import { use, useEffect, useMemo, useState } from "react"
+import {
+  use,
+  useEffect,
+  useMemo,
+  useState,
+} from "react"
+
 import Link from "next/link"
 
 import { supabase } from "@/lib/supabase"
 
 import {
-  validateHtml,
+  validateCss,
   validateQuiz,
-} from "@/lib/lessons/html/validateHtml"
+} from "@/lib/lessons/css/validateCss"
 
 import {
-  htmlLessons,
-  htmlSummaries,
-} from "@/lib/lessons/html/indexHtml"
+  cssLessons,
+  cssSummaries,
+} from "@/lib/lessons/css/indexCss"
 
 import { Step } from "@/lib/types"
 
@@ -37,8 +43,8 @@ import {
   ArrowLeft,
   ArrowRight,
   CheckCircle2,
-  Trophy,
   XCircle,
+  Trophy,
 } from "lucide-react"
 
 export default function LessonPage({
@@ -46,24 +52,30 @@ export default function LessonPage({
 }: {
   params: Promise<{ id: string }>
 }) {
+
   const { id } = use(params)
 
   const lessonId = Number(id)
 
-  const [step, setStep] = useState(0)
+  const [step, setStep] =
+    useState(0)
 
   const [selected, setSelected] =
     useState<number | null>(null)
 
-  const [open, setOpen] = useState(false)
+  const [open, setOpen] =
+    useState(false)
 
-  const [code, setCode] = useState("")
+  const [code, setCode] =
+    useState("")
 
   const [result, setResult] =
     useState<boolean | null>(null)
 
-  const [validationErrors, setValidationErrors] =
-    useState<string[]>([])
+  const [
+    validationErrors,
+    setValidationErrors,
+  ] = useState<string[]>([])
 
   const [quizMessage, setQuizMessage] =
     useState("")
@@ -75,457 +87,326 @@ export default function LessonPage({
     useState(true)
 
   const steps: Step[] =
-    htmlLessons[lessonId] || []
+    cssLessons[lessonId] || []
 
   const summary =
-    htmlSummaries[lessonId]
+    cssSummaries[lessonId]
 
   const current = steps[step]
 
   const progress = useMemo(() => {
+
     if (!steps.length) return 0
 
-    return ((step + 1) / steps.length) * 100
+    return (
+      ((step + 1) /
+        steps.length) *
+      100
+    )
+
   }, [step, steps.length])
 
   // RESET
   useEffect(() => {
+
     setStep(0)
+
     setSelected(null)
+
     setResult(null)
+
     setValidationErrors([])
+
     setQuizMessage("")
 
-    const saved = localStorage.getItem(
-      `lesson-${lessonId}-code`
-    )
+    const saved =
+      localStorage.getItem(
+        `css-lesson-${lessonId}-code`
+      )
 
     if (saved) {
       setCode(saved)
     } else {
       setCode("")
     }
-  }, [lessonId])
 
-  // CHECK PROGRESS
-  useEffect(() => {
-    const checkProgress = async () => {
-      try {
-        const { data } =
-          await supabase.auth.getUser()
-
-        const user = data.user
-
-        if (!user) {
-          setLoading(false)
-          return
-        }
-
-        const { data: progressData } =
-          await supabase
-            .from("progress")
-            .select("*")
-            .eq("user_id", user.id)
-            .eq("course", "html")
-            .eq("lesson", lessonId)
-
-        if (
-          progressData &&
-          progressData.length > 0
-        ) {
-          setCompleted(true)
-        }
-      } catch (error) {
-        console.error(error)
-      } finally {
-        setLoading(false)
-      }
-    }
-
-    checkProgress()
   }, [lessonId])
 
   // AUTOSAVE
   useEffect(() => {
+
     localStorage.setItem(
-      `lesson-${lessonId}-code`,
+      `css-lesson-${lessonId}-code`,
       code
     )
+
   }, [code, lessonId])
 
-  // VALIDATE CODE
-const handleCodeValidation = () => {
+  // CHECK PROGRESS
+  useEffect(() => {
 
-  let validation
+    const checkProgress =
+      async () => {
 
-  // LEKCJA 1
-  if (lessonId === 1) {
+        try {
 
-    validation = validateHtml(code, [
-      "h1",
-      "p",
-    ])
-  }
+          const { data } =
+            await supabase.auth.getUser()
 
-  // LEKCJA 2
-  else if (lessonId === 2) {
+          const user =
+            data.user
 
-    validation = validateHtml(code, [
-      "!DOCTYPE",
-      "html",
-      "head",
-      "title",
-      "body",
-      "h1",
-      "p",
-    ])
-  }
+          if (!user) {
 
-  // LEKCJA 3
-  else if (lessonId === 3) {
+            setLoading(false)
 
-    validation = validateHtml(code, [
-      "h1",
-      "h2",
-      "p",
-      "strong",
-    ])
-  }
+            return
+          }
 
-  // LEKCJA 4
-  else if (lessonId === 4) {
+          const {
+            data: progressData,
+          } = await supabase
+            .from("progress")
+            .select("*")
+            .eq(
+              "user_id",
+              user.id
+            )
+            .eq(
+              "course",
+              "css"
+            )
+            .eq(
+              "lesson",
+              lessonId
+            )
 
-    validation = validateHtml(code, [
-      "h1",
-      "p",
-      "a",
-    ])
+          if (
+            progressData &&
+            progressData.length > 0
+          ) {
 
-    const errors = validation.errors
+            setCompleted(true)
+          }
 
-    if (!code.includes('target="_blank"')) {
-      errors.push(
-        "Brakuje linku otwierającego się w nowej karcie."
-      )
-    }
+        } catch (error) {
 
-    validation = {
-      success: errors.length === 0,
-      errors,
-    }
-  }
+          console.error(error)
 
-  // LEKCJA 5
-  else if (lessonId === 5) {
+        } finally {
 
-    validation = validateHtml(code, [
-      "h1",
-      "p",
-      "img",
-    ])
-
-    const errors = validation.errors
-
-    if (!code.includes("alt=")) {
-      errors.push(
-        "Brakuje atrybutu alt."
-      )
-    }
-
-    if (
-      !code.includes("width=") &&
-      !code.includes("style=")
-    ) {
-      errors.push(
-        "Brakuje ustawionej szerokości obrazka."
-      )
-    }
-
-    validation = {
-      success: errors.length === 0,
-      errors,
-    }
-  }
-
-  // LEKCJA 6
-  else if (lessonId === 6) {
-
-    validation = validateHtml(code, [
-      "h1",
-      "ul",
-      "ol",
-      "li",
-    ])
-
-    const errors = validation.errors
-
-    const liCount =
-      (code.match(/<li>/g) || []).length
-
-    if (liCount < 6) {
-      errors.push(
-        "Musisz dodać minimum 6 elementów <li>."
-      )
-    }
-
-    validation = {
-      success: errors.length === 0,
-      errors,
-    }
-  }
-
-  // LEKCJA 7
-  else if (lessonId === 7) {
-
-    validation = validateHtml(code, [
-      "header",
-      "nav",
-      "main",
-      "section",
-      "footer",
-      "h1",
-      "p",
-    ])
-  }
-
-  // LEKCJA 8
-  else if (lessonId === 8) {
-
-    validation = validateHtml(code, [
-      "table",
-      "tr",
-      "th",
-      "td",
-    ])
-
-    const errors = validation.errors
-
-    const trCount =
-      (code.match(/<tr>/g) || []).length
-
-    const thCount =
-      (code.match(/<th>/g) || []).length
-
-    const tdCount =
-      (code.match(/<td>/g) || []).length
-
-    if (trCount < 3) {
-      errors.push(
-        "Tabela musi mieć minimum 3 wiersze."
-      )
-    }
-
-    if (thCount < 2) {
-      errors.push(
-        "Tabela musi mieć minimum 2 nagłówki <th>."
-      )
-    }
-
-    if (tdCount < 4) {
-      errors.push(
-        "Tabela musi mieć minimum 4 komórki <td>."
-      )
-    }
-
-    validation = {
-      success: errors.length === 0,
-      errors,
-    }
-  }
-
-  // LEKCJA 9
-  else if (lessonId === 9) {
-
-    validation = validateHtml(code, [
-      "form",
-      "input",
-      "button",
-    ])
-
-    const errors = validation.errors
-
-    if (
-      !code.includes('type="text"')
-    ) {
-      errors.push(
-        "Brakuje pola tekstowego."
-      )
-    }
-
-    if (
-      !code.includes('type="email"')
-    ) {
-      errors.push(
-        "Brakuje pola email."
-      )
-    }
-
-    if (
-      !code.includes('type="password"')
-    ) {
-      errors.push(
-        "Brakuje pola hasła."
-      )
-    }
-
-    if (
-      !code.includes('type="checkbox"')
-    ) {
-      errors.push(
-        "Brakuje checkboxa."
-      )
-    }
-
-    validation = {
-      success: errors.length === 0,
-      errors,
-    }
-  }
-
-  // LEKCJA 10
-  else if (lessonId === 10) {
-
-    validation = validateHtml(code, [
-      "h1",
-      "video",
-      "iframe",
-    ])
-
-    const errors = validation.errors
-
-    if (!code.includes("controls")) {
-      errors.push(
-        "Brakuje controls w video."
-      )
-    }
-
-    if (!code.includes("autoplay")) {
-      errors.push(
-        "Brakuje autoplay."
-      )
-    }
-
-    if (!code.includes("muted")) {
-      errors.push(
-        "Brakuje muted."
-      )
-    }
-
-    if (
-      !code.includes("youtube.com") &&
-      !code.includes("youtu.be")
-    ) {
-      errors.push(
-        "Brakuje filmu YouTube w iframe."
-      )
-    }
-
-    validation = {
-      success: errors.length === 0,
-      errors,
-    }
-  }
-
-  // DOMYŚLNIE
-  else {
-
-    validation = {
-      success: true,
-      errors: [],
-    }
-  }
-
-  setValidationErrors(
-    validation.errors
-  )
-
-  setResult(validation.success)
-
-  setOpen(true)
-}
-
-
-  // VALIDATE QUIZ
-  const handleQuizValidation = () => {
-    if (current.type !== "quiz") return
-
-    const validation = validateQuiz(
-      selected,
-      current.correct
-    )
-
-    setResult(validation.success)
-
-    setQuizMessage(validation.message)
-
-    setOpen(true)
-  }
-
-  // FINISH LESSON
-  const handleFinishLesson = async () => {
-    try {
-      const { data } =
-        await supabase.auth.getUser()
-
-      const user = data.user
-
-      if (!user) return
-
-      const { data: existing } =
-        await supabase
-          .from("progress")
-          .select("*")
-          .eq("user_id", user.id)
-          .eq("course", "html")
-          .eq("lesson", lessonId)
-
-      if (!existing || existing.length === 0) {
-        await supabase.from("progress").insert({
-          user_id: user.id,
-          course: "html",
-          lesson: lessonId,
-        })
-
-        const { data: profile } =
-          await supabase
-            .from("profiles")
-            .select("xp")
-            .eq("id", user.id)
-            .single()
-
-        const currentXP =
-          profile?.xp || 0
-
-        await supabase
-          .from("profiles")
-          .update({
-            xp: currentXP + 2,
-          })
-          .eq("id", user.id)
+          setLoading(false)
+        }
       }
 
-      setCompleted(true)
-    } catch (error) {
-      console.error(error)
+    checkProgress()
+
+  }, [lessonId])
+
+  // VALIDATE
+  const handleCodeValidation =
+    () => {
+
+      let validation
+
+      if (lessonId === 1) {
+
+        validation =
+          validateCss(code, [
+            "color",
+          ])
+      }
+
+      else if (
+        lessonId === 2
+      ) {
+
+        validation =
+          validateCss(code, [
+            "<style>",
+            "background",
+            "color",
+          ])
+      }
+
+      else if (
+        lessonId === 3
+      ) {
+
+        validation =
+          validateCss(code, [
+            "font-size",
+            "font-weight",
+          ])
+      }
+
+      else if (
+        lessonId === 4
+      ) {
+
+        validation =
+          validateCss(code, [
+            "margin",
+            "padding",
+          ])
+      }
+
+      else if (
+        lessonId === 5
+      ) {
+
+        validation =
+          validateCss(code, [
+            "border",
+            "border-radius",
+          ])
+      }
+
+      else {
+
+        validation = {
+          success: true,
+          errors: [],
+        }
+      }
+
+      setValidationErrors(
+        validation.errors
+      )
+
+      setResult(
+        validation.success
+      )
+
+      setOpen(true)
     }
-  }
+
+  // QUIZ
+  const handleQuizValidation =
+    () => {
+
+      if (
+        current.type !==
+        "quiz"
+      ) return
+
+      const validation =
+        validateQuiz(
+          selected,
+          current.correct
+        )
+
+      setResult(
+        validation.success
+      )
+
+      setQuizMessage(
+        validation.message
+      )
+
+      setOpen(true)
+    }
+
+  // FINISH
+  const handleFinishLesson =
+    async () => {
+
+      try {
+
+        const { data } =
+          await supabase.auth.getUser()
+
+        const user =
+          data.user
+
+        if (!user) return
+
+        const {
+          data: existing,
+        } = await supabase
+          .from("progress")
+          .select("*")
+          .eq(
+            "user_id",
+            user.id
+          )
+          .eq(
+            "course",
+            "css"
+          )
+          .eq(
+            "lesson",
+            lessonId
+          )
+
+        if (
+          !existing ||
+          existing.length === 0
+        ) {
+
+          await supabase
+            .from("progress")
+            .insert({
+              user_id:
+                user.id,
+              course:
+                "css",
+              lesson:
+                lessonId,
+            })
+
+          const {
+            data: profile,
+          } = await supabase
+            .from("profiles")
+            .select("xp")
+            .eq(
+              "id",
+              user.id
+            )
+            .single()
+
+          const currentXP =
+            profile?.xp || 0
+
+          await supabase
+            .from("profiles")
+            .update({
+              xp:
+                currentXP + 2,
+            })
+            .eq(
+              "id",
+              user.id
+            )
+        }
+
+        setCompleted(true)
+
+      } catch (error) {
+
+        console.error(error)
+      }
+    }
 
   if (loading) {
+
     return (
-      <div className="h-screen flex items-center justify-center text-black dark:text-white">
+      <div className="h-screen flex items-center justify-center">
         Ładowanie...
       </div>
     )
   }
 
   if (!steps.length) {
+
     return (
-      <div className="h-screen flex items-center justify-center text-black dark:text-white">
+      <div className="h-screen flex items-center justify-center">
         Nie znaleziono lekcji
       </div>
     )
   }
-
+// SUMMARY
 if (completed && summary) {
 
   return (
@@ -651,7 +532,7 @@ if (completed && summary) {
             ) : (
 
               <Link
-                href={`/dashboard/inf03/html/${lessonId + 1}`}
+                href={`/dashboard/inf03/css/${lessonId + 1}`}
                 className="w-full"
               >
 
@@ -681,23 +562,54 @@ if (completed && summary) {
     </div>
   )
 }
-  return (
-    <div className="h-[calc(100vh-64px)] -mt-10 overflow-hidden text-black dark:text-white">
+  const preview =
+    lessonId === 2
+      ? `
+      <html>
 
-      <div
-        className="
-          h-full
-          max-w-7xl
-          mx-auto
-          px-4
-          md:px-6
-          py-4
-          flex
-          flex-col
-          gap-4
-          overflow-hidden
-        "
-      >
+        ${code}
+
+        <body>
+
+          <h1>CSS Preview</h1>
+
+          <p>Test paragrafu</p>
+
+          <button>Button</button>
+
+        </body>
+
+      </html>
+    `
+      : `
+      <html>
+
+        <head>
+
+          <style>
+            ${code}
+          </style>
+
+        </head>
+
+        <body>
+
+          <h1>CSS Preview</h1>
+
+          <p>Test paragrafu</p>
+
+          <button>Button</button>
+
+        </body>
+
+      </html>
+    `
+
+  return (
+
+    <div className="h-[calc(100vh-64px)] overflow-hidden text-black dark:text-white -mt-10">
+
+      <div className="h-full max-w-7xl mx-auto px-4 md:px-6 py-4 flex flex-col gap-4 overflow-hidden">
 
         {/* TOPBAR */}
         <div className="shrink-0 rounded-3xl border border-black/10 dark:border-white/10 bg-white/70 dark:bg-black/60 backdrop-blur-2xl p-5">
@@ -705,18 +617,23 @@ if (completed && summary) {
           <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-5 mb-4">
 
             <div>
+
               <p className="text-sm text-black/50 dark:text-white/40">
                 Lekcja {lessonId}
               </p>
 
               <h1 className="text-2xl md:text-3xl font-bold text-blue-600 dark:text-blue-400">
+
                 {current.type === "quiz"
                   ? "🧠 Quiz"
                   : current.title}
+
               </h1>
+
             </div>
 
             <div>
+
               <p className="text-sm text-black/50 dark:text-white/40">
                 Postęp
               </p>
@@ -724,6 +641,7 @@ if (completed && summary) {
               <p className="text-2xl font-bold text-blue-600 dark:text-blue-400">
                 {Math.round(progress)}%
               </p>
+
             </div>
 
           </div>
@@ -732,46 +650,36 @@ if (completed && summary) {
 
         </div>
 
-        {/* MAIN CARD */}
-        <Card
-          className="
-            flex
-            flex-col
-            flex-1
-            min-h-0
-            overflow-hidden
-            rounded-[32px]
-            border
-            border-black/10
-            dark:border-white/10
-            bg-white/70
-            dark:bg-black/50
-            backdrop-blur-2xl
-            shadow-2xl
-          "
-        >
+        {/* MAIN */}
+        <Card className="flex flex-col flex-1 min-h-0 overflow-hidden rounded-[32px] border border-black/10 dark:border-white/10 bg-white/70 dark:bg-black/50 backdrop-blur-2xl shadow-2xl">
 
-          {/* SCROLL */}
           <div className="flex-1 min-h-0 overflow-y-auto">
 
             <CardContent className="p-4 md:p-6 lg:p-8 pb-32">
 
               {/* TEXT */}
               {current.type === "text" && (
-                <div className="max-w-4xl mx-auto text-[16px] md:text-[17px] leading-8 whitespace-pre-line text-black/80 dark:text-white/80">
+
+                <div className="max-w-4xl mx-auto whitespace-pre-line text-[16px] md:text-[17px] leading-8 text-black/80 dark:text-white/80">
+
                   {current.content}
+
                 </div>
               )}
 
               {/* CODE */}
               {current.type === "code" && (
+
                 <pre className="bg-[#0B1120] text-green-400 p-5 md:p-8 rounded-3xl overflow-x-auto text-sm md:text-base border border-white/10 leading-7">
+
                   {current.content}
+
                 </pre>
               )}
 
               {/* CODE TASK */}
               {current.type === "code-task" && (
+
                 <div className="space-y-8">
 
                   <div className="rounded-[28px] border border-black/10 dark:border-white/10 bg-white/80 dark:bg-white/[0.03] p-6 md:p-8">
@@ -780,8 +688,10 @@ if (completed && summary) {
                       Zadanie
                     </p>
 
-                    <div className="text-lg whitespace-pre-line leading-8 text-black/80 dark:text-white/80">
+                    <div className="text-lg whitespace-pre-line leading-8">
+
                       {current.content}
+
                     </div>
 
                   </div>
@@ -794,13 +704,15 @@ if (completed && summary) {
                       <div className="flex items-center justify-between">
 
                         <div>
+
                           <p className="text-sm text-black/50 dark:text-white/40">
-                            Edytor HTML
+                            Edytor CSS
                           </p>
 
                           <h3 className="text-xl font-semibold">
-                            index.html
+                            style.css
                           </h3>
+
                         </div>
 
                         <div className="px-3 py-1 rounded-full bg-green-500/10 border border-green-500/20 text-green-500 text-xs font-medium">
@@ -814,13 +726,17 @@ if (completed && summary) {
                         <div className="flex items-center justify-between px-5 py-4 border-b border-white/10 bg-black/20">
 
                           <div className="flex items-center gap-2">
+
                             <div className="w-3 h-3 rounded-full bg-red-500" />
+
                             <div className="w-3 h-3 rounded-full bg-yellow-500" />
+
                             <div className="w-3 h-3 rounded-full bg-green-500" />
+
                           </div>
 
                           <div className="text-xs text-white/40">
-                            HTML
+                            CSS
                           </div>
 
                         </div>
@@ -828,7 +744,9 @@ if (completed && summary) {
                         <textarea
                           value={code}
                           onChange={(e) =>
-                            setCode(e.target.value)
+                            setCode(
+                              e.target.value
+                            )
                           }
                           spellCheck={false}
                           className="
@@ -856,6 +774,7 @@ if (completed && summary) {
                       <div className="flex items-center justify-between">
 
                         <div>
+
                           <p className="text-sm text-black/50 dark:text-white/40">
                             Podgląd strony
                           </p>
@@ -863,15 +782,21 @@ if (completed && summary) {
                           <h3 className="text-xl font-semibold">
                             localhost
                           </h3>
+
                         </div>
 
                         <Button
                           onClick={() => {
+
                             const newWindow =
                               window.open()
 
                             if (newWindow) {
-                              newWindow.document.write(code)
+
+                              newWindow.document.write(
+                                preview
+                              )
+
                               newWindow.document.close()
                             }
                           }}
@@ -883,20 +808,8 @@ if (completed && summary) {
 
                       <div className="rounded-[28px] overflow-hidden border border-black/10 dark:border-white/10 bg-white shadow-2xl">
 
-                        <div className="flex items-center gap-3 px-4 py-3 border-b bg-neutral-100">
-
-                          <div className="w-3 h-3 rounded-full bg-red-500" />
-                          <div className="w-3 h-3 rounded-full bg-yellow-500" />
-                          <div className="w-3 h-3 rounded-full bg-green-500" />
-
-                          <div className="flex-1 h-9 rounded-xl bg-white border flex items-center px-4 text-sm text-neutral-500">
-                            localhost:3000
-                          </div>
-
-                        </div>
-
                         <iframe
-                          srcDoc={code}
+                          srcDoc={preview}
                           title="preview"
                           className="w-full h-[45vh] 2xl:h-[60vh] bg-white"
                         />
@@ -908,8 +821,10 @@ if (completed && summary) {
                   </div>
 
                   <Button
-                    onClick={handleCodeValidation}
-                    className="w-full h-14 rounded-2xl bg-blue-600 hover:bg-blue-700 text-white text-lg font-semibold"
+                    onClick={
+                      handleCodeValidation
+                    }
+                    className="w-full h-14 rounded-2xl bg-blue-600 hover:bg-blue-700"
                   >
                     ✅ Sprawdź kod
                   </Button>
@@ -917,10 +832,11 @@ if (completed && summary) {
                 </div>
               )}
 
-        {/* QUIZ */}
+    
+  {/* QUIZ */}
 {current.type === "quiz" && (
 
-   <div className="max-w-4xl mx-auto -mt-8.5 space-y-8">
+  <div className="max-w-4xl mx-auto -mt-8.5 space-y-8">
 
     <div className="p-6 md:p-8 mt-3 rounded-[28px] border border-black/10 dark:border-white/10 bg-white/80 dark:bg-white/[0.03]">
 
@@ -943,8 +859,7 @@ if (completed && summary) {
             selected === index
 
           return (
-
-            <button
+  <button
               key={index}
               onClick={() => {
 
@@ -1011,137 +926,58 @@ if (completed && summary) {
 
   </div>
 )}
-          
             </CardContent>
 
           </div>
 
           {/* BOTTOM NAV */}
-        <div
-  className="
-    shrink-0
+          <div className="shrink-0 border-t border-black/10 dark:border-white/10 bg-white/80 dark:bg-black/80 backdrop-blur-xl p-3 sm:p-4 flex flex-col sm:flex-row gap-3 sm:gap-4 sm:items-center sm:justify-between">
 
-    border-t
-    border-black/10
-    dark:border-white/10
+            <Button
+              disabled={step === 0}
+              onClick={() =>
+                setStep(step - 1)
+              }
+              className="w-full sm:w-auto h-11 sm:h-14 px-5 sm:px-8 rounded-2xl bg-blue-600 hover:bg-blue-700"
+            >
+              <ArrowLeft className="w-4 h-4 mr-2" />
+              Wstecz
+            </Button>
 
-    bg-white/80
-    dark:bg-black/80
+            {step ===
+            steps.length - 1 ? (
 
-    backdrop-blur-xl
+              <Button
+                onClick={
+                  handleFinishLesson
+                }
+                className="w-full sm:w-auto h-11 sm:h-14 px-5 sm:px-8 rounded-2xl bg-green-600 hover:bg-green-700"
+              >
+                <CheckCircle2 className="w-4 h-4 mr-2" />
+                Zakończ
+              </Button>
 
-    p-3
-    sm:p-4
+            ) : (
 
-    flex flex-col
-    sm:flex-row
+              <Button
+                onClick={() =>
+                  setStep(step + 1)
+                }
+                className="w-full sm:w-auto h-11 sm:h-14 px-5 sm:px-8 rounded-2xl bg-blue-600 hover:bg-blue-700"
+              >
+                Dalej
+                <ArrowRight className="w-4 h-4 ml-2" />
+              </Button>
 
-    gap-3
-    sm:gap-4
+            )}
 
-    sm:items-center
-    sm:justify-between
-  "
->
+          </div>
 
-  <Button
-    disabled={step === 0}
-    onClick={() =>
-      setStep(step - 1)
-    }
-    className="
-      w-full
-      sm:w-auto
-
-      h-11
-      sm:h-14
-
-      px-5
-      sm:px-8
-
-      rounded-2xl
-
-      text-sm
-      sm:text-base
-
-      bg-blue-600
-      hover:bg-blue-700
-
-      text-white
-    "
-  >
-    <ArrowLeft className="w-4 h-4 mr-2" />
-    Wstecz
-  </Button>
-
-  {step === steps.length - 1 ? (
-
-    <Button
-      onClick={handleFinishLesson}
-      className="
-        w-full
-        sm:w-auto
-
-        h-11
-        sm:h-14
-
-        px-5
-        sm:px-8
-
-        rounded-2xl
-
-        text-sm
-        sm:text-base
-
-        bg-green-600
-        hover:bg-green-700
-
-        text-white
-      "
-    >
-      <CheckCircle2 className="w-4 h-4 mr-2" />
-      Zakończ
-    </Button>
-
-  ) : (
-
-    <Button
-      onClick={() =>
-        setStep(step + 1)
-      }
-      className="
-        w-full
-        sm:w-auto
-
-        h-11
-        sm:h-14
-
-        px-5
-        sm:px-8
-
-        rounded-2xl
-
-        text-sm
-        sm:text-base
-
-        bg-blue-600
-        hover:bg-blue-700
-
-        text-white
-      "
-    >
-      Dalej
-      <ArrowRight className="w-4 h-4 ml-2" />
-    </Button>
-
-  )}
-
-</div>
         </Card>
 
       </div>
 
-      {/* DRAWER */}
+    {/* DRAWER */}
       <Drawer
         open={open}
         onOpenChange={setOpen}

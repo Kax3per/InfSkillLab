@@ -396,34 +396,34 @@ Temat:
 ]
 
 export const lesson10Summary = {
-  title: "📚 Podsumowanie lekcji",
-  content: `
-HTML pozwala osadzać multimedia na stronie internetowej.
 
-Najważniejsze elementy:
-✔ <video> → filmy  
-✔ <iframe> → osadzanie stron  
-✔ controls → sterowanie filmem  
-✔ autoplay → automatyczne odtwarzanie  
-✔ muted → wyciszenie filmu  
-✔ loop → zapętlenie filmu  
-✔ src → źródło multimediów  
+  title: "🏁 Podsumowanie kursu HTML",
 
-Poznane atrybuty:
-🔹 src  
-🔹 controls  
-🔹 autoplay  
-🔹 muted  
-🔹 loop  
-🔹 width  
-🔹 height  
+  content:
+`
+Gratulacje! Ukończyłeś kurs HTML 🎉
 
-Zapamiętaj:
-👉 multimedia zwiększają atrakcyjność strony  
-👉 iframe pozwala osadzać YouTube i inne strony  
-👉 autoplay często wymaga muted  
-👉 video działa bezpośrednio w przeglądarce  
+Poznałeś:
 
-Nowoczesne strony internetowe bardzo często korzystają z multimediów.
+✔ strukturę strony HTML  
+✔ znaczniki tekstowe  
+✔ linki i obrazki  
+✔ listy i tabele  
+✔ formularze  
+✔ semantic HTML  
+✔ multimedia  
+✔ head i meta tagi  
+✔ osadzanie CSS i JavaScript  
+
+Najważniejsze technologie:
+🔹 HTML5  
+🔹 semantic tags  
+🔹 forms  
+🔹 tables  
+🔹 media elements  
+
+👉 HTML jest fundamentem każdej strony internetowej.
+
+Teraz potrafisz budować kompletne struktury stron WWW 🚀
 `,
 }
