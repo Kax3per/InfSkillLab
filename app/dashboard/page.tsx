@@ -93,12 +93,11 @@ const courseLessons: Record<string, number> = {
   html: 10,
   css: 20,
   js: 20,
-  ts: 0,
   react: 0,
   next: 0,
   node: 0,
-  php: 0,
-  sql: 0,
+  php: 20,
+  sql: 20,
   python: 0,
 }
 
@@ -489,12 +488,12 @@ useEffect(() => {
     <SelectItem value="html">HTML</SelectItem>
     <SelectItem value="css">CSS</SelectItem>
     <SelectItem value="js">JavaScript</SelectItem>
-    <SelectItem value="ts">TypeScript</SelectItem>
+    <SelectItem value="php">PHP</SelectItem>
+    <SelectItem value="sql">SQL</SelectItem>
+
     <SelectItem value="react">React</SelectItem>
     <SelectItem value="next">Next.js</SelectItem>
     <SelectItem value="node">Node.js</SelectItem>
-    <SelectItem value="php">PHP</SelectItem>
-    <SelectItem value="sql">SQL</SelectItem>
     <SelectItem value="python">Python</SelectItem>
 
   </SelectContent>
