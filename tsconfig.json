@@ -34,7 +34,7 @@
     "**/*.tsx",
     ".next/types/**/*.ts",
     ".next/dev/types/**/*.ts"
-  ],
+, "app/dashboard/inf03/js/[id]/page.jsx"  ],
   "exclude": [
     "node_modules"
   ]

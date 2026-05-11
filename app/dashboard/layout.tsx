@@ -1,6 +1,9 @@
 "use client"
-
-import { useEffect, useState } from "react"
+import {
+  useEffect,
+  useRef,
+  useState,
+} from "react"
 
 import Link from "next/link"
 
@@ -42,6 +45,9 @@ export default function DashboardLayout({
 
   const [loading, setLoading] =
     useState(true)
+
+    const userIdRef =
+  useRef<string | null>(null)
 
   // 🔥 LESSON PAGE DETECTION
   const isLessonPage =
@@ -134,6 +140,7 @@ export default function DashboardLayout({
         router.push("/verify-email")
         return
       }
+      userIdRef.current = user.id
 
       setUserData({
         email: user.email,
@@ -174,6 +181,65 @@ export default function DashboardLayout({
     }
   }, [router])
 
+
+  // 🔥 GLOBAL STUDY TIMER
+// 🔥 GLOBAL STUDY TIMER
+useEffect(() => {
+
+  let interval: NodeJS.Timeout
+
+  const startTimer = () => {
+
+    interval = setInterval(async () => {
+
+      const userId =
+        userIdRef.current
+
+      if (!userId) return
+
+      // aktywna karta?
+      if (document.hidden) return
+
+      try {
+
+        const { data } =
+          await supabase
+            .from("user_stats")
+            .select("study_minutes")
+            .eq("user_id", userId)
+            .single()
+
+        const currentMinutes =
+          data?.study_minutes || 0
+
+        await supabase
+          .from("user_stats")
+          .update({
+            study_minutes:
+              currentMinutes + 1 / 60,
+          })
+          .eq("user_id", userId)
+
+      } catch (error) {
+
+        console.error(error)
+
+      }
+
+    }, 1000)
+  }
+
+  startTimer()
+
+  return () => {
+
+    if (interval) {
+      clearInterval(interval)
+    }
+
+  }
+
+}, [])
   if (loading || !userData) {
     return (
       <div className="flex h-screen items-center justify-center bg-white dark:bg-black">

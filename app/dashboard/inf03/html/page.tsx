@@ -95,71 +95,82 @@ export default function HtmlPage() {
   const progress = (lastDone / lessons.length) * 100
 
   return (
-    <div className="relative min-h-screen overflow-hidden bg-white dark:bg-black text-black lesson-scroll dark:text-white">
+<div className="relative min-h-screen overflow-hidden bg-white dark:bg-black text-black lesson-scroll dark:text-white">
 
-      {/* BACKGROUND */}
-      <div className="absolute inset-0 pointer-events-none">
+  {/* BACKGROUND */}
+  <div className="absolute inset-0 pointer-events-none">
 
-        {/* LIGHT */}
-        <div className="dark:hidden">
-          <div className="absolute top-20 left-10 w-72 h-72 bg-blue-400/30 rounded-full blur-[120px]" />
-          <div className="absolute bottom-10 right-10 w-80 h-80 bg-blue-500/30 rounded-full blur-[140px]" />
+    {/* LIGHT */}
+    <div className="dark:hidden">
+      <div className="absolute top-20 left-10 w-72 h-72 bg-orange-400/30 rounded-full blur-[120px]" />
+      <div className="absolute bottom-10 right-10 w-80 h-80 bg-yellow-400/30 rounded-full blur-[140px]" />
+    </div>
+
+    {/* DARK */}
+    <div className="hidden dark:block">
+      <div className="absolute top-20 left-10 w-72 h-72 bg-orange-500/20 rounded-full blur-[140px]" />
+      <div className="absolute bottom-10 right-10 w-80 h-80 bg-yellow-500/20 rounded-full blur-[160px]" />
+    </div>
+
+  </div>
+
+  <div className="relative z-10 max-w-5xl mx-auto px-6 py-10 space-y-8">
+
+    {/* HEADER */}
+    <div className="space-y-4">
+
+      <div className="flex items-center gap-3">
+
+        <div className="p-3 rounded-2xl bg-orange-500 text-white">
+          <Code2 className="w-6 h-6" />
         </div>
 
-        {/* DARK */}
-        <div className="hidden dark:block">
-          <div className="absolute top-20 left-10 w-72 h-72 bg-blue-500/20 rounded-full blur-[140px]" />
-          <div className="absolute bottom-10 right-10 w-80 h-80 bg-blue-600/20 rounded-full blur-[160px]" />
+        <div>
+
+          <h1 className="text-4xl font-bold">
+            HTML
+          </h1>
+
+          <p className="text-black/60 dark:text-white/60">
+            Naucz się podstaw tworzenia stron internetowych
+          </p>
+
         </div>
 
       </div>
 
-      <div className="relative z-10 max-w-5xl mx-auto px-6 py-10 space-y-8">
+      {/* PROGRESS */}
+      <Card className="border border-black/10 dark:border-white/10 bg-white/70 dark:bg-black/50 backdrop-blur-xl rounded-3xl">
 
-        {/* HEADER */}
-        <div className="space-y-4">
+        <CardContent className="p-6 space-y-4">
 
-          <div className="flex items-center gap-3">
-            <div className="p-3 rounded-2xl bg-blue-600 text-white">
-              <Code2 className="w-6 h-6" />
-            </div>
+          <div className="flex items-center justify-between">
 
             <div>
-              <h1 className="text-4xl font-bold">
-                HTML
-              </h1>
 
-              <p className="text-black/60 dark:text-white/60">
-                Naucz się podstaw tworzenia stron internetowych
+              <p className="font-semibold text-lg">
+                Postęp kursu
               </p>
+
+              <p className="text-sm text-black/60 dark:text-white/60">
+                Ukończono {lastDone} z {lessons.length} lekcji
+              </p>
+
             </div>
+
+            <div className="text-2xl font-bold text-orange-500 dark:text-orange-400">
+              {Math.round(progress)}%
+            </div>
+
           </div>
 
-          {/* PROGRESS */}
-          <Card className="border border-black/10 dark:border-white/10 bg-white/70 dark:bg-black/50 backdrop-blur-xl rounded-3xl">
-            <CardContent className="p-6 space-y-4">
+          <Progress value={progress} className="h-3" />
 
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="font-semibold text-lg">
-                    Postęp kursu
-                  </p>
+        </CardContent>
 
-                  <p className="text-sm text-black/60 dark:text-white/60">
-                    Ukończono {lastDone} z {lessons.length} lekcji
-                  </p>
-                </div>
+      </Card>
 
-                <div className="text-2xl font-bold text-blue-600 dark:text-blue-400">
-                  {Math.round(progress)}%
-                </div>
-              </div>
-
-              <Progress value={progress} className="h-3" />
-
-            </CardContent>
-          </Card>
-        </div>
+    </div>
 
         {/* LESSONS */}
         <div className="grid gap-5">
@@ -194,7 +205,7 @@ export default function HtmlPage() {
                   >
 
                     {/* glow */}
-                    <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity bg-blue-500/5" />
+                    <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity bg-orange-300/5" />
 
                     <CardContent className="relative z-10 p-6 flex items-center justify-between">
 
@@ -206,11 +217,11 @@ export default function HtmlPage() {
                           rounded-2xl
                           flex items-center justify-center
                           text-2xl
-                          bg-blue-100
-                          dark:bg-blue-500/10
+                          bg-orange-100
+                          dark:bg-orange-500/10
                           border
-                          border-blue-200
-                          dark:border-blue-500/20
+                          border-orange-200
+                          dark:border-orange-500/20
                         "
                         >
                           {lesson.icon}
@@ -241,7 +252,7 @@ export default function HtmlPage() {
                         flex items-center justify-center
                         bg-black/5
                         dark:bg-white/5
-                        group-hover:bg-blue-600
+                        group-hover:bg-orange-300
                         transition-colors
                       "
                       >

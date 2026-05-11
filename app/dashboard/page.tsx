@@ -73,8 +73,39 @@ const motivationNotes = [
   "Dyscyplina > motywacja 💪",
 ]
 
+
 export default function DashboardPage() {
-  const totalLessons = 10
+
+ const [selectedCourse, setSelectedCourse] =
+  useState(() => {
+    if (typeof window !== "undefined") {
+      return (
+        localStorage.getItem(
+          "selected-course"
+        ) || "html"
+      )
+    }
+
+    return "html"
+  })
+
+const courseLessons: Record<string, number> = {
+  html: 10,
+  css: 20,
+  js: 20,
+  ts: 0,
+  react: 0,
+  next: 0,
+  node: 0,
+  php: 0,
+  sql: 0,
+  python: 0,
+}
+
+const totalLessons =
+  courseLessons[selectedCourse] || 0
+
+
   const pathname = usePathname()
 
   // 🔥 STATES
@@ -138,7 +169,7 @@ const randomNote =
           .from("progress")
           .select("lesson")
           .eq("user_id", user.id)
-          .eq("course", "html")
+          .eq("course", selectedCourse)
 
       const uniqueLessons = [
         ...new Set(
@@ -157,14 +188,18 @@ const randomNote =
           : 0
 
       const next =
-        last >= totalLessons
-          ? totalLessons
-          : last + 1
+    totalLessons === 0
+    ? 1
+    : last >= totalLessons
+    ? totalLessons
+    : last + 1
 
-      const progressPercent =
-        Math.round(
-          (completed / totalLessons) * 100
-        )
+     const progressPercent =
+  totalLessons > 0
+    ? Math.round(
+        (completed / totalLessons) * 100
+      )
+    : 0
 
       // 🔥 ALL LESSONS
       const { data: allLessons } =
@@ -214,54 +249,69 @@ const randomNote =
       }
 
       // 🔥 STREAK
-      const today = new Date()
+// 🔥 STREAK
+const today = new Date()
 
-      const todayString =
-        today.toISOString().split("T")[0]
+const todayString =
+  today.toLocaleDateString("en-CA")
 
-      const yesterday = new Date()
+const yesterday = new Date()
 
-      yesterday.setDate(
-        yesterday.getDate() - 1
-      )
+yesterday.setDate(
+  yesterday.getDate() - 1
+)
 
-      const yesterdayString =
-        yesterday.toISOString().split("T")[0]
+const yesterdayString =
+  yesterday.toLocaleDateString("en-CA")
 
-      let currentStreak =
-        stats?.streak || 1
+const lastActive =
+  stats?.last_active
+    ?.split("T")[0]
 
-      if (
-        stats?.last_active ===
-        yesterdayString
-      ) {
-        currentStreak += 1
+let currentStreak =
+  stats?.streak || 1
 
-        await supabase
-          .from("user_stats")
-          .update({
-            streak: currentStreak,
-            last_active: todayString,
-          })
-          .eq("user_id", user.id)
-      } else if (
-        stats?.last_active === todayString
-      ) {
-        currentStreak =
-          stats?.streak || 1
-      } else if (
-        stats?.last_active !== todayString
-      ) {
-        currentStreak = 1
+// był aktywny wczoraj → streak +1
+if (
+  lastActive === yesterdayString
+) {
 
-        await supabase
-          .from("user_stats")
-          .update({
-            streak: 1,
-            last_active: todayString,
-          })
-          .eq("user_id", user.id)
-      }
+  currentStreak += 1
+
+  await supabase
+    .from("user_stats")
+    .update({
+      streak: currentStreak,
+      last_active: todayString,
+    })
+    .eq("user_id", user.id)
+
+}
+
+// był już dziś → nic nie zmieniaj
+else if (
+  lastActive === todayString
+) {
+
+  currentStreak =
+    stats?.streak || 1
+
+}
+
+// ominął dzień → reset
+else {
+
+  currentStreak = 1
+
+  await supabase
+    .from("user_stats")
+    .update({
+      streak: 1,
+      last_active: todayString,
+    })
+    .eq("user_id", user.id)
+
+}
 
       if (!mounted) return
 
@@ -293,37 +343,36 @@ const randomNote =
     return () => {
       mounted = false
     }
-  }, [pathname])
+  }, [pathname, selectedCourse])
 
   // 🔥 LIVE TIMER
+useEffect(() => {
+
+  const interval = setInterval(() => {
+
+    if (!document.hidden) {
+
+      setStudySeconds(
+        (prev) => prev + 1
+      )
+
+    }
+
+  }, 1000)
+
+  return () => clearInterval(interval)
+
+}, [])
+
+ 
   useEffect(() => {
-    const interval = setInterval(() => {
-      setStudySeconds((prev) => prev + 1)
-    }, 1000)
 
-    return () => clearInterval(interval)
-  }, [])
+  localStorage.setItem(
+    "selected-course",
+    selectedCourse
+  )
 
-  // 🔥 SAVE TIMER
-  useEffect(() => {
-    const interval = setInterval(async () => {
-      const userId = userIdRef.current
-
-      if (!userId) return
-
-      const minutes =
-        studySeconds / 60
-
-      await supabase
-        .from("user_stats")
-        .update({
-          study_minutes: minutes,
-        })
-        .eq("user_id", userId)
-    }, 60000)
-
-    return () => clearInterval(interval)
-  }, [studySeconds])
+}, [selectedCourse])
 
   // 🔥 FORMAT TIME
   const minutes = Math.floor(
@@ -387,19 +436,22 @@ const randomNote =
                     : "Rozpocznij naukę"}
                 </div>
 
-                <h2 className="mt-5 text-4xl font-bold text-black dark:text-white">
-                  HTML
-                </h2>
+             <h2 className="mt-5 text-4xl font-bold text-black dark:text-white">
+  {selectedCourse.toUpperCase()}
+</h2>
 
                 <p className="mt-2 text-lg text-black/60 dark:text-muted-foreground">
-                  Kontynuuj naukę frontend 🚀
+                  Kontynuuj naukę  🚀
                 </p>
               </div>
 
   
 
   {/* SELECT */}
-<Select defaultValue="html">
+<Select
+  value={selectedCourse}
+  onValueChange={setSelectedCourse}
+>
 
   <SelectTrigger
     className="
@@ -454,7 +506,7 @@ const randomNote =
 
             {/* BUTTON */}
             <Link
-              href={`/dashboard/inf03/html/${nextLesson}`}
+              href={`/dashboard/inf03/${selectedCourse}/${nextLesson}`}
             >
               <button
                 className="
@@ -488,7 +540,7 @@ const randomNote =
             <div className="mt-8">
               <div className="mb-3 flex items-center justify-between">
                 <span className="text-sm text-black/50 dark:text-muted-foreground">
-                  Postęp kursu HTML
+                  Postęp kursu {selectedCourse.toUpperCase()}
                 </span>
 
                 <span className="font-semibold text-black dark:text-white">
