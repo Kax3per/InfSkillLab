@@ -11,36 +11,62 @@ Dzięki JavaScript możesz:
 👉 reagować na kliknięcia użytkownika  
 👉 zmieniać zawartość strony  
 👉 tworzyć animacje  
+👉 tworzyć gry i aplikacje  
 👉 pobierać dane z internetu  
-👉 budować aplikacje webowe  
 
-JavaScript działa w przeglądarce internetowej.
+📌 JavaScript działa w przeglądarce internetowej.
 
-📌 Na egzaminie INF.03 często pojawiają się pytania dotyczące:
-✔ zmiennych  
-✔ instrukcji warunkowych  
-✔ pętli  
-✔ funkcji  
-✔ działania skryptów JS`,
+Najczęściej używa się go razem z:
+✔ HTML — struktura strony  
+✔ CSS — wygląd strony  
+✔ JavaScript — działanie strony`,
   },
 
   {
     type: "text",
-    title: "🧠 Jak działa JavaScript?",
+    title: "📄 Plik JavaScript",
     content:
-`JavaScript wykonuje instrukcje zapisane w kodzie.
+`Kod JavaScript zapisujemy w plikach z rozszerzeniem:
 
-Kod wykonywany jest od góry do dołu.
+👉 .js
 
-Przykłady zastosowań:
-🔹 kliknięcie przycisku  
-🔹 walidacja formularza  
-🔹 wyskakujące okna  
-🔹 zmiana tekstu na stronie  
+Przykłady:
+✔ app.js  
+✔ script.js  
+✔ main.js  
 
-📌 JavaScript często współpracuje z:
-✔ HTML — struktura strony  
-✔ CSS — wygląd strony`,
+📌 Rozszerzenie .js oznacza plik JavaScript.
+
+Takie pliki tworzymy np. w:
+🔹 Visual Studio Code  
+🔹 WebStorm  
+🔹 Notatniku`,
+  },
+
+  {
+    type: "text",
+    title: "🧠 Jak uruchomić JavaScript?",
+    content:
+`JavaScript można uruchamiać bezpośrednio w przeglądarce internetowej.
+
+Najłatwiejszy sposób:
+👉 otworzyć konsolę przeglądarki.
+
+Jak wejść do konsoli?
+
+🌐 Google Chrome:
+✔ kliknij F12  
+✔ wybierz zakładkę Console
+
+🧭 Safari:
+✔ Preferences → Advanced  
+✔ zaznacz "Show Develop menu"  
+✔ potem Develop → Show JavaScript Console
+
+🦊 Firefox:
+✔ F12 → Console
+
+📌 Konsola pozwala testować kod JavaScript na żywo.`,
   },
 
   {
@@ -60,9 +86,9 @@ Przykład:
 console.log("Cześć")
 
 👉 console.log() — polecenie wyświetlenia danych  
-👉 "Cześć" — tekst do wyświetlenia  
+👉 "Cześć" — tekst do wyświetlenia
 
-📌 Konsola jest bardzo ważna podczas nauki i debugowania kodu.`,
+Po uruchomieniu kodu napis pojawi się w konsoli przeglądarki.`,
   },
 
   {
@@ -73,14 +99,14 @@ console.log("Cześć")
 
 Najczęściej używamy:
 ✔ let  
-✔ const  
+✔ const
 
 Przykłady danych:
 🔹 tekst  
 🔹 liczby  
-🔹 wartości true/false  
+🔹 true / false
 
-📌 Dzięki zmiennym możemy przechowywać informacje i używać ich później w programie.`,
+📌 Dzięki zmiennym możemy zapisywać informacje i używać ich później.`,
   },
 
   {
@@ -95,12 +121,13 @@ console.log(imie)`,
     type: "text",
     title: "⚠ Najczęstsze błędy",
     content:
-`Podczas nauki JavaScript początkujący często popełniają błędy:
+`Początkujący często popełniają błędy:
 
-❌ brak średnika lub nawiasu  
-❌ literówki w nazwach zmiennych  
-❌ używanie zmiennej przed utworzeniem  
-❌ brak cudzysłowów przy tekście  
+❌ brak nawiasu  
+❌ brak cudzysłowu  
+❌ literówki  
+❌ zła nazwa zmiennej  
+❌ brak ; na końcu instrukcji
 
 📌 Nawet mały błąd może zatrzymać działanie programu.`,
   },
@@ -119,18 +146,16 @@ Następnie:
 
   {
     type: "quiz",
-    question: "Za co odpowiada JavaScript?",
+    question: "Jakie rozszerzenie ma plik JavaScript?",
     answers: [
-      "Za strukturę strony",
-      "Za wygląd strony",
-      "Za interakcje i działanie strony",
-      "Za bazę danych",
+      ".html",
+      ".css",
+      ".js",
+      ".sql",
     ],
     correct: 2,
     explanation:
-`JavaScript odpowiada za interakcje i logikę działania strony internetowej.
-
-HTML odpowiada za strukturę, a CSS za wygląd.`,
+`Pliki JavaScript mają rozszerzenie .js.`,
   },
 
   {
@@ -144,7 +169,7 @@ HTML odpowiada za strukturę, a CSS za wygląd.`,
     ],
     correct: 1,
     explanation:
-`console.log() służy do wyświetlania informacji w konsoli przeglądarki.`,
+`console.log() służy do wyświetlania danych w konsoli przeglądarki.`,
   },
 ]
 
@@ -153,18 +178,19 @@ export const lesson1Summary = {
   content: `
 JavaScript to język programowania używany do tworzenia interaktywnych stron internetowych.
 
-Zapamiętaj najważniejsze informacje:
+Zapamiętaj:
 
-✔ JavaScript odpowiada za działanie strony  
-✔ Kod wykonywany jest od góry do dołu  
-✔ console.log() wyświetla dane w konsoli  
-✔ Zmienne przechowują dane  
-✔ Najczęściej używamy let i const  
+✔ Pliki JavaScript mają rozszerzenie .js  
+✔ JavaScript działa w przeglądarce  
+✔ Konsolę można otworzyć przez F12  
+✔ console.log() wyświetla dane  
+✔ let i const służą do tworzenia zmiennych
 
 Najważniejsze elementy:
+🔹 .js — rozszerzenie pliku  
 🔹 console.log() — wyświetlanie danych  
-🔹 let — tworzenie zmiennej  
-🔹 const — stała wartość  
+🔹 let — zmienna  
+🔹 const — stała wartość
 
 👉 To podstawa wszystkich kolejnych lekcji JavaScript.
 `,

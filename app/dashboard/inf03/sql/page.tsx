@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react"
 import Link from "next/link"
-
+import { SiMysql } from "react-icons/si"
 import { supabase } from "@/lib/supabase"
 
 import {
@@ -199,19 +199,11 @@ export default function SqlPage() {
 
           <div className="flex items-center gap-3">
 
-            <div className="p-3 rounded-2xl bg-orange-600 text-white">
-
-              <Database className="w-6 h-6" />
-
-            </div>
+            <SiMysql className="w-20 h-20" />
 
             <div>
 
-              <h1 className="text-4xl font-bold">
-                SQL
-              </h1>
-
-              <p className="text-black/60 dark:text-white/60">
+              <p className="text-black/60 dark:text-white/60 mt-5 ml-3">
                 Naucz się baz danych i phpMyAdmin
               </p>
 

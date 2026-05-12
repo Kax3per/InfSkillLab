@@ -840,60 +840,8 @@ export default function LessonPage({
 
                   </div>
 
-                  <div className="rounded-[28px] overflow-hidden border border-white/10 bg-[#0B1120] shadow-2xl">
-
-                    <div className="flex items-center justify-between px-5 py-4 border-b border-white/10 bg-black/20">
-
-                      <div className="flex items-center gap-2">
-
-                        <div className="w-3 h-3 rounded-full bg-red-500" />
-
-                        <div className="w-3 h-3 rounded-full bg-yellow-500" />
-
-                        <div className="w-3 h-3 rounded-full bg-green-500" />
-
-                      </div>
-
-                      <div className="text-xs text-white/40">
-                        JavaScript
-                      </div>
-
-                    </div>
-
-                    <textarea
-                      value={code}
-                      onChange={(e) =>
-                        setCode(
-                          e.target.value
-                        )
-                      }
-                      spellCheck={false}
-                      className="
-                        w-full
-                        h-[45vh]
-                        2xl:h-[60vh]
-                        bg-[#0B1120]
-                        text-yellow-400
-                        font-mono
-                        text-[15px]
-                        leading-7
-                        p-5
-                        resize-none
-                        outline-none
-                      "
-                    />
-
-                  </div>
-
-                  <Button
-                    onClick={
-                      handleCodeValidation
-                    }
-                    className="w-full h-14 rounded-2xl bg-yellow-500 hover:bg-yellow-600 text-black"
-                  >
-                    ✅ Sprawdź kod
-                  </Button>
-
+               
+               
                 </div>
               )}
 

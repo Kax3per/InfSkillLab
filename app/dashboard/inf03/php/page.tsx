@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react"
 import Link from "next/link"
-
+import { SiPhp } from "react-icons/si"
 import { supabase } from "@/lib/supabase"
 
 import {
@@ -193,37 +193,18 @@ export default function PHPPage() {
       <div className="relative z-10 max-w-5xl mx-auto px-6 py-10 space-y-8">
 
         {/* HEADER */}
-        <div className="space-y-4">
+          <div className="space-y-4">
 
-          <div className="flex items-center gap-4">
+         <div className="flex items-center gap-3">
 
-            <div
-              className="
-                w-14
-                h-14
-                rounded-3xl
-                bg-violet-600
-                flex
-                items-center
-                justify-center
-                text-white
-                shadow-lg
-                shadow-violet-500/30
-              "
-            >
+           <SiPhp className="w-20 h-20" />
 
-              <Code2 className="w-6 h-6" />
+              <div>
 
-            </div>
-
-            <div>
-
-              <h1 className="text-4xl font-black">
-                PHP
-              </h1>
+   
 
               <p className="text-black/60 dark:text-white/60">
-                Naucz się backendu, formularzy i pracy z bazą danych
+                Naucz się podstaw PHP
               </p>
 
             </div>
@@ -231,36 +212,28 @@ export default function PHPPage() {
           </div>
 
           {/* PROGRESS */}
-          <Card
-            className="
-              rounded-[32px]
-              border
-              border-black/10
-              dark:border-white/10
-              bg-white/70
-              dark:bg-black/50
-              backdrop-blur-2xl
-            "
-          >
+          <Card className="border border-black/10 dark:border-white/10 bg-white/70 dark:bg-black/50 backdrop-blur-xl rounded-3xl">
 
-            <CardContent className="p-6 space-y-5">
+            <CardContent className="p-6 space-y-4">
 
               <div className="flex items-center justify-between">
 
                 <div>
 
-                  <p className="text-3xl font-bold">
+                  <p className="font-semibold text-lg">
                     Postęp kursu
                   </p>
 
-                  <p className="text-black/60 dark:text-white/60">
+                  <p className="text-sm text-black/60 dark:text-white/60">
                     Ukończono {lastDone} z {lessons.length} lekcji
                   </p>
 
                 </div>
 
-                <div className="text-3xl font-black text-violet-600 dark:text-violet-400">
+                <div className="text-2xl font-bold text-violet-600 dark:text-violet-400">
+
                   {Math.round(progress)}%
+
                 </div>
 
               </div>
@@ -398,10 +371,11 @@ export default function PHPPage() {
 
             return (
 
+           
               <Card
                 key={lesson.id}
                 className="
-                  rounded-[32px]
+                  rounded-3xl
                   border
                   border-black/10
                   dark:border-white/10
@@ -417,13 +391,10 @@ export default function PHPPage() {
 
                     <div
                       className="
-                        w-16
-                        h-16
-                        rounded-3xl
-                        flex
-                        items-center
-                        justify-center
-                        text-3xl
+                        w-14 h-14
+                        rounded-2xl
+                        flex items-center justify-center
+                        text-2xl
                         bg-black/5
                         dark:bg-white/5
                       "
@@ -437,7 +408,7 @@ export default function PHPPage() {
                         Lekcja {lesson.id}
                       </p>
 
-                      <h2 className="text-2xl font-bold">
+                      <h2 className="text-xl font-semibold">
                         {lesson.title}
                       </h2>
 
@@ -445,7 +416,7 @@ export default function PHPPage() {
 
                   </div>
 
-                  <Lock className="w-6 h-6 text-black/40 dark:text-white/40" />
+                  <Lock className="w-5 h-5 text-black/40 dark:text-white/40" />
 
                 </CardContent>
 

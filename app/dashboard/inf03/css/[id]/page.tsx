@@ -670,7 +670,7 @@ if (completed && summary) {
               {/* CODE */}
               {current.type === "code" && (
 
-                <pre className="bg-[#0B1120] text-green-400 p-5 md:p-8 rounded-3xl overflow-x-auto text-sm md:text-base border border-white/10 leading-7">
+                <pre className="bg-[#0B1120] text-blue-400 p-5 md:p-8 rounded-3xl overflow-x-auto text-sm md:text-base border border-white/10 leading-7">
 
                   {current.content}
 

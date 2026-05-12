@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react"
 import { supabase } from "@/lib/supabase"
 import Link from "next/link"
-
+import { SiJavascript } from "react-icons/si"
 import { Card, CardContent } from "@/components/ui/card"
 import { Progress } from "@/components/ui/progress"
 
@@ -180,15 +180,9 @@ export default function JSPage() {
 
           <div className="flex items-center gap-3">
 
-            <div className="p-3 rounded-2xl bg-yellow-300 text-black">
-              <Code2 className="w-6 h-6" />
-            </div>
+            <SiJavascript className="w-20 h-15" />
 
             <div>
-
-              <h1 className="text-4xl font-bold">
-                JavaScript
-              </h1>
 
               <p className="text-black/60 dark:text-white/60">
                 Naucz się programowania stron internetowych

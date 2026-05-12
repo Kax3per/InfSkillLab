@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react"
 import { supabase } from "@/lib/supabase"
 import Link from "next/link"
-
+import { FaCss3Alt } from "react-icons/fa"
 import { Card, CardContent } from "@/components/ui/card"
 import { Progress } from "@/components/ui/progress"
 
@@ -171,14 +171,9 @@ export default function CSSPage() {
 
           <div className="flex items-center gap-3">
 
-            <div className="p-3 rounded-2xl bg-blue-600 text-white">
-              <Code2 className="w-6 h-6" />
-            </div>
+            <FaCss3Alt className="w-20 h-15" />
 
             <div>
-              <h1 className="text-4xl font-bold">
-                CSS
-              </h1>
 
               <p className="text-black/60 dark:text-white/60">
                 Naucz się stylowania nowoczesnych stron internetowych

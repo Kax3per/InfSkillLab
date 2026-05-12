@@ -553,16 +553,16 @@ if (completed && summary) {
               w-16 h-16
               sm:w-20 sm:h-20
               rounded-3xl
-              bg-blue-500/10
+              bg-orange-500/10
               border
-              border-blue-500/20
+              border-orange-500/20
               flex
               items-center
               justify-center
               shrink-0
             ">
 
-              <Trophy className="w-8 h-8 sm:w-10 sm:h-10 text-blue-500" />
+              <Trophy className="w-8 h-8 sm:w-10 sm:h-10 text-orange-500" />
 
             </div>
 
@@ -577,8 +577,8 @@ if (completed && summary) {
                 sm:text-3xl
                 md:text-4xl
                 font-bold
-                text-blue-600
-                dark:text-blue-400
+                text-orange-600
+                dark:text-orange-400
                 break-words
               ">
                 {summary.title}
@@ -659,8 +659,8 @@ if (completed && summary) {
                   w-full
                   h-12 sm:h-14
                   rounded-2xl
-                  bg-blue-600
-                  hover:bg-blue-700
+                  bg-orange-600
+                  hover:bg-orange-700
                   text-sm sm:text-base
                 ">
 
@@ -709,7 +709,7 @@ if (completed && summary) {
                 Lekcja {lessonId}
               </p>
 
-              <h1 className="text-2xl md:text-3xl font-bold text-blue-600 dark:text-blue-400">
+              <h1 className="text-2xl md:text-3xl font-bold text-orange-600 dark:text-orange-400">
                 {current.type === "quiz"
                   ? "🧠 Quiz"
                   : current.title}
@@ -721,7 +721,7 @@ if (completed && summary) {
                 Postęp
               </p>
 
-              <p className="text-2xl font-bold text-blue-600 dark:text-blue-400">
+              <p className="text-2xl font-bold text-orange-600 dark:text-orange-400">
                 {Math.round(progress)}%
               </p>
             </div>
@@ -765,7 +765,7 @@ if (completed && summary) {
 
               {/* CODE */}
               {current.type === "code" && (
-                <pre className="bg-[#0B1120] text-green-400 p-5 md:p-8 rounded-3xl overflow-x-auto text-sm md:text-base border border-white/10 leading-7">
+                <pre className="bg-[#0B1120] text-orange-400 p-5 md:p-8 rounded-3xl overflow-x-auto text-sm md:text-base border border-white/10 leading-7">
                   {current.content}
                 </pre>
               )}
@@ -776,7 +776,7 @@ if (completed && summary) {
 
                   <div className="rounded-[28px] border border-black/10 dark:border-white/10 bg-white/80 dark:bg-white/[0.03] p-6 md:p-8">
 
-                    <p className="text-sm uppercase tracking-[0.2em] text-blue-600 dark:text-blue-400 font-semibold mb-4">
+                    <p className="text-sm uppercase tracking-[0.2em] text-orange-600 dark:text-orange-400 font-semibold mb-4">
                       Zadanie
                     </p>
 
@@ -836,7 +836,7 @@ if (completed && summary) {
                             h-[45vh]
                             2xl:h-[60vh]
                             bg-[#0B1120]
-                            text-blue-400
+                            text-orange-400
                             font-mono
                             text-[15px]
                             leading-7
@@ -909,7 +909,7 @@ if (completed && summary) {
 
                   <Button
                     onClick={handleCodeValidation}
-                    className="w-full h-14 rounded-2xl bg-blue-600 hover:bg-blue-700 text-white text-lg font-semibold"
+                    className="w-full h-14 rounded-2xl bg-orange-600 hover:bg-orange-700 text-white text-lg font-semibold"
                   >
                     ✅ Sprawdź kod
                   </Button>
@@ -924,7 +924,7 @@ if (completed && summary) {
 
     <div className="p-6 md:p-8 mt-3 rounded-[28px] border border-black/10 dark:border-white/10 bg-white/80 dark:bg-white/[0.03]">
 
-      <p className="text-sm uppercase tracking-[0.2em] text-blue-600 dark:text-blue-400 font-semibold mb-1">
+      <p className="text-sm uppercase tracking-[0.2em] text-orange-600 dark:text-orange-400 font-semibold mb-1">
         Quiz
       </p>
 
@@ -1064,8 +1064,8 @@ if (completed && summary) {
       text-sm
       sm:text-base
 
-      bg-blue-600
-      hover:bg-blue-700
+      bg-orange-600
+      hover:bg-orange-700
 
       text-white
     "
@@ -1124,8 +1124,8 @@ if (completed && summary) {
         text-sm
         sm:text-base
 
-        bg-blue-600
-        hover:bg-blue-700
+        bg-orange-600
+        hover:bg-orange-700
 
         text-white
       "
