@@ -812,7 +812,7 @@ if (completed && summary) {
       leading-7
     "
     style={{
-       color: "#ffff",
+       color: "#7C3AED",
     }}
   >
 
